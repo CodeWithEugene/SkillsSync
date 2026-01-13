@@ -101,12 +101,14 @@ export default async function DashboardPage() {
         <Card className="bento-card bento-card-primary lg:col-span-2 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
           <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-primary/10 p-3">
+              <div className="rounded-2xl bg-primary/10 p-3 flex-shrink-0">
                 <Target className="size-6 text-primary" />
               </div>
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg sm:text-xl truncate">Career Goal</CardTitle>
-                <CardDescription className="text-xs sm:text-sm truncate">Your target career path</CardDescription>
+              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <CardTitle className="text-lg sm:text-xl truncate leading-tight">Career Goal</CardTitle>
+                <CardDescription className="text-xs sm:text-sm truncate leading-tight mt-0.5">
+                  Your target career path
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -128,12 +130,14 @@ export default async function DashboardPage() {
         <Card className="bento-card bento-card-accent overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
           <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-accent/10 p-3">
+              <div className="rounded-2xl bg-accent/10 p-3 flex-shrink-0">
                 <GraduationCap className="size-6 text-accent" />
               </div>
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg sm:text-xl truncate">Learning Journey</CardTitle>
-                <CardDescription className="text-xs sm:text-sm truncate">Your study path</CardDescription>
+              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <CardTitle className="text-lg sm:text-xl truncate leading-tight">Learning Journey</CardTitle>
+                <CardDescription className="text-xs sm:text-sm truncate leading-tight mt-0.5">
+                  Your study path
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
