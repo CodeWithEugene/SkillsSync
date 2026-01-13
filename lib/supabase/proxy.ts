@@ -25,16 +25,30 @@ export async function updateSession(request: NextRequest) {
     },
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+
+    // If the user doesn't exist (e.g., deleted from database), sign out and clear cookies
+    if (error && error.message.includes("user_not_found")) {
+      await supabase.auth.signOut()
+      user = null
+    } else {
+      user = data.user
+    }
+  } catch (error) {
+    // Clear invalid session
+    await supabase.auth.signOut()
+    user = null
+  }
 
   // Redirect to login if accessing protected routes without authentication
   if (
     (request.nextUrl.pathname.startsWith("/dashboard") ||
       request.nextUrl.pathname.startsWith("/documents") ||
       request.nextUrl.pathname.startsWith("/skills") ||
-      request.nextUrl.pathname.startsWith("/profile")) &&
+      request.nextUrl.pathname.startsWith("/profile") ||
+      request.nextUrl.pathname.startsWith("/onboarding")) &&
     !user
   ) {
     const url = request.nextUrl.clone()

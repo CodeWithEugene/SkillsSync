@@ -50,20 +50,18 @@ export default function RegisterPage() {
             last_name: lastName,
             full_name: `${firstName} ${lastName}`,
           },
-          emailRedirectTo: undefined,
         },
       })
 
       if (signUpError) throw signUpError
 
-      if (signUpData.user) {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
+      if (signUpData.user && !signUpData.session) {
+        setError("Please check your email to confirm your account, then sign in.")
+        setIsLoading(false)
+        return
+      }
 
-        if (signInError) throw signInError
-
+      if (signUpData.session) {
         window.location.href = "/onboarding"
       }
     } catch (error: unknown) {
