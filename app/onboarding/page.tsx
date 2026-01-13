@@ -6,9 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Sparkles, GraduationCap, Target, Clock } from "lucide-react"
+import { Sparkles, Target, GraduationCap, BookOpen, TrendingUp } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -17,14 +17,14 @@ export default function OnboardingPage() {
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
-    currentStudy: "",
-    wantToStudy: "",
-    studyDuration: "",
     careerGoal: "",
-    skillGoal: "",
+    educationLevel: "",
+    currentStudy: "",
+    studyYear: "",
+    topPriority: "",
   })
 
-  const totalSteps = 4
+  const totalSteps = 5
   const progress = (step / totalSteps) * 100
 
   useEffect(() => {
@@ -85,109 +85,127 @@ export default function OnboardingPage() {
         </CardHeader>
 
         <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
+          {/* Step 1: Career Goal */}
           {step === 1 && (
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
+              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
+                <Target className="size-5 sm:size-6 text-primary flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-sm sm:text-base">Career Goal</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">What&apos;s your ultimate career goal?</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="careerGoal">What is your ultimate career goal?</Label>
+                <Input
+                  id="careerGoal"
+                  placeholder="e.g., Data Scientist, Full Stack Developer, UX Designer..."
+                  value={formData.careerGoal}
+                  onChange={(e) => setFormData({ ...formData, careerGoal: e.target.value })}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Education Level */}
+          {step === 2 && (
             <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
               <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
                 <GraduationCap className="size-5 sm:size-6 text-primary flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Your Current Studies</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    Tell us what you&apos;re currently learning
-                  </p>
+                  <h3 className="font-semibold text-sm sm:text-base">Education Level</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Tell us about your current education</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="educationLevel">What is your current level of education?</Label>
+                <Select
+                  value={formData.educationLevel}
+                  onValueChange={(value) => setFormData({ ...formData, educationLevel: value })}
+                >
+                  <SelectTrigger id="educationLevel">
+                    <SelectValue placeholder="Select your education level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high-school">High School</SelectItem>
+                    <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                    <SelectItem value="graduate">Graduate</SelectItem>
+                    <SelectItem value="self-taught">Self-Taught</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Current Study */}
+          {step === 3 && (
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
+              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
+                <BookOpen className="size-5 sm:size-6 text-primary flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-sm sm:text-base">Current Studies</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">What are you currently studying?</p>
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="currentStudy">What are you currently studying?</Label>
-                <Textarea
+                <Input
                   id="currentStudy"
-                  placeholder="e.g., Computer Science, Web Development, Data Analysis..."
+                  placeholder="e.g., B.Sc. in Computer Science, Web Development Bootcamp..."
                   value={formData.currentStudy}
                   onChange={(e) => setFormData({ ...formData, currentStudy: e.target.value })}
-                  rows={4}
-                  className="resize-none"
                 />
               </div>
             </div>
           )}
 
-          {step === 2 && (
-            <div className="space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4">
-                <Target className="size-6 text-primary" />
+          {/* Step 4: Study Year */}
+          {step === 4 && (
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
+              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
+                <GraduationCap className="size-5 sm:size-6 text-primary flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold">Future Learning Goals</h3>
-                  <p className="text-sm text-muted-foreground">What skills do you want to develop?</p>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="wantToStudy">What do you want to learn next?</Label>
-                  <Textarea
-                    id="wantToStudy"
-                    placeholder="e.g., Machine Learning, Cloud Computing, Mobile Development..."
-                    value={formData.wantToStudy}
-                    onChange={(e) => setFormData({ ...formData, wantToStudy: e.target.value })}
-                    rows={4}
-                    className="resize-none"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4">
-                <Clock className="size-6 text-primary" />
-                <div>
-                  <h3 className="font-semibold">Timeline & Commitment</h3>
-                  <p className="text-sm text-muted-foreground">How long do you plan to study?</p>
+                  <h3 className="font-semibold text-sm sm:text-base">Year of Study</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">This helps us understand your skill depth</p>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="studyDuration">Study duration or timeline</Label>
+                <Label htmlFor="studyYear">What year of study are you in?</Label>
                 <Input
-                  id="studyDuration"
-                  placeholder="e.g., 6 months, 1 year, 2 hours per day..."
-                  value={formData.studyDuration}
-                  onChange={(e) => setFormData({ ...formData, studyDuration: e.target.value })}
+                  id="studyYear"
+                  placeholder="e.g., Year 2, Final Year, 6 months in..."
+                  value={formData.studyYear}
+                  onChange={(e) => setFormData({ ...formData, studyYear: e.target.value })}
                 />
               </div>
             </div>
           )}
 
-          {step === 4 && (
-            <div className="space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4">
-                <Target className="size-6 text-primary" />
+          {/* Step 5: Top Priority */}
+          {step === 5 && (
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
+              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
+                <TrendingUp className="size-5 sm:size-6 text-primary flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold">Career Aspirations</h3>
-                  <p className="text-sm text-muted-foreground">Define your career and skill goals</p>
+                  <h3 className="font-semibold text-sm sm:text-base">Your Priority</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">What matters most to you right now?</p>
                 </div>
               </div>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="careerGoal">What career are you working towards?</Label>
-                  <Textarea
-                    id="careerGoal"
-                    placeholder="e.g., Full Stack Developer, Data Scientist, UX Designer..."
-                    value={formData.careerGoal}
-                    onChange={(e) => setFormData({ ...formData, careerGoal: e.target.value })}
-                    rows={3}
-                    className="resize-none"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="skillGoal">Key skills you want to master</Label>
-                  <Textarea
-                    id="skillGoal"
-                    placeholder="e.g., React, Python, Data Visualization, System Design..."
-                    value={formData.skillGoal}
-                    onChange={(e) => setFormData({ ...formData, skillGoal: e.target.value })}
-                    rows={3}
-                    className="resize-none"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="topPriority">What is your top priority right now?</Label>
+                <Select
+                  value={formData.topPriority}
+                  onValueChange={(value) => setFormData({ ...formData, topPriority: value })}
+                >
+                  <SelectTrigger id="topPriority">
+                    <SelectValue placeholder="Select your priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="finding-internship">Finding an internship</SelectItem>
+                    <SelectItem value="degree-worth">Checking if my degree is worth it</SelectItem>
+                    <SelectItem value="skill-gaps">Identifying skill gaps</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           )}

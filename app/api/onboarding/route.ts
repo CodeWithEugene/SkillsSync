@@ -14,14 +14,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { currentStudy, wantToStudy, studyDuration, careerGoal, skillGoal } = body
+    const { careerGoal, educationLevel, currentStudy, studyYear, topPriority } = body
 
     const userGoal = await createUserGoal(user.id, {
-      currentStudy,
-      wantToStudy,
-      studyDuration,
       careerGoal,
-      skillGoal,
+      educationLevel,
+      currentStudy,
+      studyYear,
+      topPriority,
     })
 
     return NextResponse.json(userGoal)
