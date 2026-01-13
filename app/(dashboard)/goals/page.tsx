@@ -3,6 +3,11 @@ import { getUserGoal } from "@/lib/db"
 import { Target, GraduationCap, Calendar, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { redirect } from "next/navigation"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "SkillSync - Goals",
+}
 
 export default async function GoalsPage() {
   const user = await requireAuth()

@@ -14,12 +14,7 @@ export const metadata: Metadata = {
     "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
   generator: "v0.app",
   icons: {
-    icon: [
-      {
-        url: "/favicon.svg",
-        type: "image/svg+xml",
-      },
-    ],
+    icon: "/favicon.svg",
     shortcut: "/favicon.svg",
     apple: "/favicon.svg",
   },

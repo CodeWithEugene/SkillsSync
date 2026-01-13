@@ -12,6 +12,10 @@ export default function DocumentsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [showUpload, setShowUpload] = useState(false)
 
+  useEffect(() => {
+    document.title = "SkillSync - Documents"
+  }, [])
+
   const fetchDocuments = async () => {
     try {
       const response = await fetch("/api/documents")

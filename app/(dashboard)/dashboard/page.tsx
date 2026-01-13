@@ -4,6 +4,11 @@ import { DocumentList } from "@/components/documents/document-list"
 import { FileText, Lightbulb, CheckCircle, Clock } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { redirect } from "next/navigation"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "SkillSync - Dashboard",
+}
 
 export default async function DashboardPage() {
   const user = await requireAuth()

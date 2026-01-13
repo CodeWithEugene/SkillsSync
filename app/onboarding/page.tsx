@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -26,6 +26,10 @@ export default function OnboardingPage() {
 
   const totalSteps = 4
   const progress = (step / totalSteps) * 100
+
+  useEffect(() => {
+    document.title = "SkillSync - Welcome"
+  }, [])
 
   const handleNext = () => {
     if (step < totalSteps) {
@@ -68,7 +72,7 @@ export default function OnboardingPage() {
       <Card className="w-full max-w-2xl shadow-2xl">
         <CardHeader className="space-y-2 sm:space-y-3 text-center px-4 sm:px-6">
           <div className="mx-auto flex size-12 sm:size-16 items-center justify-center rounded-full bg-primary/10">
-            <Sparkles className="size-6 sm:size-8 text-primary" />
+            <Sparkles className="size-6 sm:size-8 text-primary flex-shrink-0" />
           </div>
           <CardTitle className="text-2xl sm:text-3xl">Welcome to SkillSync!</CardTitle>
           <CardDescription className="text-sm sm:text-base">

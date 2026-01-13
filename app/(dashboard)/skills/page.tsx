@@ -9,6 +9,10 @@ export default function SkillsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    document.title = "SkillSync - Skills"
+  }, [])
+
+  useEffect(() => {
     const fetchSkills = async () => {
       try {
         const response = await fetch("/api/skills")
