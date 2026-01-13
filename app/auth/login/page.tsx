@@ -91,7 +91,7 @@ export default function LoginPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full transition-all hover:scale-[1.02] bg-transparent"
+                  className="w-full transition-all hover:scale-[1.02] bg-transparent hover:text-white"
                   onClick={handleGoogleSignIn}
                   disabled={isGoogleLoading || isLoading}
                 >

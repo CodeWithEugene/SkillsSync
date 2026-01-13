@@ -14,10 +14,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
 # env files
-.env*
+.env
+.env.*
 
 # vercel
 .vercel
@@ -25,3 +26,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Chat/AI agent instructions
+.github/copilot-instructions.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.local
+*.swp
+
+# Ignore coverage reports
+coverage/
+
+# Ignore IDE/editor settings
+.vscode/
+.idea/
+*.code-workspace

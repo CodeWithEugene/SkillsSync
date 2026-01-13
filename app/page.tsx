@@ -57,7 +57,7 @@ export default async function HomePage() {
                 <Button
                   size="default"
                   variant="outline"
-                  className="w-full sm:w-auto bg-transparent hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
+                  className="w-full sm:w-auto bg-transparent hover:bg-primary hover:text-white hover:border-primary transition-all"
                   asChild
                 >
                   <Link href="/auth/login">Sign In</Link>

@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full transition-all hover:scale-[1.02] bg-transparent"
+                  className="w-full transition-all hover:scale-[1.02] bg-transparent hover:text-white"
                   onClick={handleGoogleSignUp}
                   disabled={isGoogleLoading || isLoading}
                 >
