@@ -12,9 +12,9 @@ interface DocumentListProps {
 export function DocumentList({ documents }: DocumentListProps) {
   if (documents.length === 0) {
     return (
-      <Card className="elevation-1">
+      <Card className="border-dashed">
         <CardContent className="p-12 text-center">
-          <File className="mx-auto size-12 text-muted-foreground" />
+          <File className="mx-auto size-12 text-muted-foreground opacity-50" />
           <p className="mt-4 text-lg font-semibold">No documents yet</p>
           <p className="text-sm text-muted-foreground mt-1">Upload your first document to get started</p>
         </CardContent>
@@ -23,15 +23,23 @@ export function DocumentList({ documents }: DocumentListProps) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="space-y-3">
       {documents.map((doc) => (
-        <Card key={doc.id} className="elevation-1 material-transition hover:elevation-3 hover:scale-[1.01]">
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 elevation-1">
-              <File className="size-6 text-primary" />
+        <Card key={doc.id} className="transition-all hover:shadow-md hover:border-primary/20 cursor-pointer group">
+          <CardContent className="flex items-center gap-4 p-4">
+            <div
+              className={`flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                doc.status === "COMPLETED"
+                  ? "bg-success/10 text-success group-hover:bg-success/20"
+                  : doc.status === "FAILED"
+                    ? "bg-destructive/10 text-destructive group-hover:bg-destructive/20"
+                    : "bg-warning/10 text-warning group-hover:bg-warning/20"
+              }`}
+            >
+              <File className="size-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold truncate">{doc.filename}</p>
+              <p className="font-semibold truncate group-hover:text-primary transition-colors">{doc.filename}</p>
               <p className="text-sm text-muted-foreground mt-0.5">
                 {new Date(doc.uploadDate).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -44,9 +52,9 @@ export function DocumentList({ documents }: DocumentListProps) {
               variant={doc.status === "COMPLETED" ? "default" : doc.status === "FAILED" ? "destructive" : "secondary"}
               className="shrink-0 rounded-full px-3 py-1"
             >
-              {doc.status === "PROCESSING" && <Clock className="mr-1 size-3" />}
-              {doc.status === "COMPLETED" && <CheckCircle className="mr-1 size-3" />}
-              {doc.status === "FAILED" && <XCircle className="mr-1 size-3" />}
+              {doc.status === "PROCESSING" && <Clock className="mr-1.5 size-3" />}
+              {doc.status === "COMPLETED" && <CheckCircle className="mr-1.5 size-3" />}
+              {doc.status === "FAILED" && <XCircle className="mr-1.5 size-3" />}
               {doc.status}
             </Badge>
           </CardContent>

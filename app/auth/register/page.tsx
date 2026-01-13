@@ -13,7 +13,8 @@ import { Sparkles, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
 export default function RegisterPage() {
-  const [fullName, setFullName] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -45,15 +46,16 @@ export default function RegisterPage() {
         password,
         options: {
           data: {
-            full_name: fullName,
+            first_name: firstName,
+            last_name: lastName,
+            full_name: `${firstName} ${lastName}`,
           },
-          emailRedirectTo: undefined, // No email confirmation needed
+          emailRedirectTo: undefined,
         },
       })
 
       if (signUpError) throw signUpError
 
-      // If signup succeeded, automatically sign in
       if (signUpData.user) {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
@@ -62,7 +64,6 @@ export default function RegisterPage() {
 
         if (signInError) throw signInError
 
-        // Redirect to onboarding using full page reload
         window.location.href = "/onboarding"
       }
     } catch (error: unknown) {
@@ -72,11 +73,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <header className="border-b">
+    <div className="flex min-h-screen w-full flex-col bg-background">
+      <header className="border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <Sparkles className="size-6 text-primary" />
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform group-hover:scale-110">
+              <Sparkles className="size-4" />
+            </div>
             <span className="text-xl font-bold">SkillSync</span>
           </Link>
           <ThemeToggle />
@@ -85,80 +88,98 @@ export default function RegisterPage() {
 
       <div className="flex flex-1 items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-sm">
-          <div className="flex flex-col gap-6">
-            <Card>
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Create Account</CardTitle>
-                <CardDescription>Join SkillSync to track your skills</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleRegister}>
-                  <div className="flex flex-col gap-6">
-                    <div className="grid gap-2">
-                      <Label htmlFor="fullName">Full Name</Label>
-                      <Input
-                        id="fullName"
-                        type="text"
-                        placeholder="John Doe"
-                        required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="you@example.com"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        required
-                        minLength={6}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="confirm-password">Confirm Password</Label>
-                      <Input
-                        id="confirm-password"
-                        type="password"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                      />
-                    </div>
-                    {error && <p className="text-sm text-destructive">{error}</p>}
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="mr-2 size-4 animate-spin" />
-                          Signing you up...
-                        </>
-                      ) : (
-                        "Create Account"
-                      )}
-                    </Button>
+          <Card className="shadow-lg">
+            <CardHeader className="text-center space-y-2">
+              <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
+              <CardDescription>Join SkillSync to track your skills</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      type="text"
+                      placeholder="John"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="transition-all focus:ring-2 focus:ring-primary"
+                    />
                   </div>
-                  <div className="mt-4 text-center text-sm">
-                    Already have an account?{" "}
-                    <Link href="/auth/login" className="underline underline-offset-4">
-                      Sign in
-                    </Link>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder="Doe"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="transition-all focus:ring-2 focus:ring-primary"
+                    />
                   </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="transition-all focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    minLength={6}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="transition-all focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="transition-all focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                {error && (
+                  <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3">
+                    <p className="text-sm text-destructive">{error}</p>
+                  </div>
+                )}
+                <Button type="submit" className="w-full transition-all hover:scale-[1.02]" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      Signing you up...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
+                </Button>
+                <div className="text-center text-sm text-muted-foreground">
+                  Already have an account?{" "}
+                  <Link href="/auth/login" className="font-medium text-primary hover:underline">
+                    Sign in
+                  </Link>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

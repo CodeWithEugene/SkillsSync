@@ -42,11 +42,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <header className="border-b">
+    <div className="flex min-h-screen w-full flex-col bg-background">
+      <header className="border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <Sparkles className="size-6 text-primary" />
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform group-hover:scale-110">
+              <Sparkles className="size-4" />
+            </div>
             <span className="text-xl font-bold">SkillSync</span>
           </Link>
           <ThemeToggle />
@@ -55,58 +57,60 @@ export default function LoginPage() {
 
       <div className="flex flex-1 items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-sm">
-          <div className="flex flex-col gap-6">
-            <Card>
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Sign in to your account</CardTitle>
-                <CardDescription>Continue to SkillSync</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleLogin}>
-                  <div className="flex flex-col gap-6">
-                    <div className="grid gap-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="you@example.com"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
-                    {error && <p className="text-sm text-destructive">{error}</p>}
-                    <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="mr-2 size-4 animate-spin" />
-                          Signing you in...
-                        </>
-                      ) : (
-                        "Sign In"
-                      )}
-                    </Button>
+          <Card className="shadow-lg">
+            <CardHeader className="text-center space-y-2">
+              <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+              <CardDescription>Sign in to continue to SkillSync</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="transition-all focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="transition-all focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                {error && (
+                  <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3">
+                    <p className="text-sm text-destructive">{error}</p>
                   </div>
-                  <div className="mt-4 text-center text-sm">
-                    Don&apos;t have an account?{" "}
-                    <Link href="/auth/register" className="underline underline-offset-4">
-                      Create account
-                    </Link>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
+                )}
+                <Button type="submit" className="w-full transition-all hover:scale-[1.02]" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      Signing you in...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+                <div className="text-center text-sm text-muted-foreground">
+                  Don&apos;t have an account?{" "}
+                  <Link href="/auth/register" className="font-medium text-primary hover:underline">
+                    Create account
+                  </Link>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

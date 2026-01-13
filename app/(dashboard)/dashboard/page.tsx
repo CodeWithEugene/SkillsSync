@@ -22,8 +22,7 @@ export default async function DashboardPage() {
   // Get unique skill categories
   const categories = new Set(skills.map((s) => s.category).filter(Boolean))
 
-  const fullName = user.user_metadata?.full_name
-  const firstName = fullName ? fullName.split(" ")[0] : user.email?.split("@")[0] || "there"
+  const firstName = user.user_metadata?.first_name || user.email?.split("@")[0] || "there"
 
   return (
     <div className="flex h-full flex-col gap-6">
