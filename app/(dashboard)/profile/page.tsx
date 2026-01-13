@@ -8,7 +8,7 @@ export default async function ProfilePage() {
   const user = await requireAuth()
 
   return (
-    <div className="space-y-8">
+    <div className="flex h-full flex-col gap-6">
       <div>
         <h1 className="text-4xl font-bold tracking-tight">Profile</h1>
         <p className="text-lg text-muted-foreground">Manage your account information</p>

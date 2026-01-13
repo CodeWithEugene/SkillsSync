@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   const firstName = fullName ? fullName.split(" ")[0] : user.email?.split("@")[0] || "there"
 
   return (
-    <div className="space-y-6">
+    <div className="flex h-full flex-col gap-6">
       <div className="space-y-2">
         <h1 className="text-4xl font-bold tracking-tight">Welcome back, {firstName}!</h1>
         <p className="text-lg text-muted-foreground">Here's your skill tracking overview.</p>
@@ -94,9 +94,9 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-0">
         {/* Large card spanning 2 columns */}
-        <Card className="bento-card bento-card-primary md:col-span-2">
+        <Card className="bento-card bento-card-primary md:col-span-2 overflow-hidden flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="rounded-2xl bg-primary/10 p-3">
@@ -121,7 +121,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bento-card bento-card-accent">
+        <Card className="bento-card bento-card-accent overflow-hidden flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="rounded-2xl bg-accent/10 p-3">
@@ -156,12 +156,12 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="bento-card">
+      <Card className="bento-card max-h-80 flex flex-col overflow-hidden">
         <CardHeader>
           <CardTitle className="text-2xl">Recent Documents</CardTitle>
           <CardDescription>Your latest uploads</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 overflow-y-auto">
           <DocumentList documents={documents.slice(0, 5)} />
         </CardContent>
       </Card>

@@ -31,7 +31,7 @@ export default function DocumentsPage() {
   }, [])
 
   return (
-    <div className="space-y-8">
+    <div className="flex h-full flex-col gap-6">
       <div>
         <h1 className="text-4xl font-bold tracking-tight">Documents</h1>
         <p className="text-muted-foreground mt-2">Upload and manage your documents for skill extraction</p>
@@ -52,12 +52,14 @@ export default function DocumentsPage() {
         />
       )}
 
-      <div>
-        <h2 className="mb-6 text-2xl font-semibold">Your Documents</h2>
+      <div className="flex-1 flex flex-col min-h-0">
+        <h2 className="mb-4 text-2xl font-semibold">Your Documents</h2>
         {isLoading ? (
           <p className="text-muted-foreground">Loading documents...</p>
         ) : (
-          <DocumentList documents={documents} />
+          <div className="flex-1 overflow-y-auto">
+            <DocumentList documents={documents} />
+          </div>
         )}
       </div>
     </div>
