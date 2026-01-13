@@ -65,8 +65,8 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Feature Cards - Compact 4-column grid */}
-            <div className="grid gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
+            {/* Feature Cards - Updated mobile grid: 2 columns on mobile, 4 columns on desktop */}
+            <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
               <Card className="bento-card bento-card-primary hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <CardHeader className="p-4 lg:p-6">
                   <div className="rounded-xl bg-primary/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
