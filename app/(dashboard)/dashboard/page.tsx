@@ -25,13 +25,13 @@ export default async function DashboardPage() {
   const firstName = user.user_metadata?.first_name || user.email?.split("@")[0] || "there"
 
   return (
-    <div className="flex h-full flex-col gap-6">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight">Welcome back, {firstName}!</h1>
-        <p className="text-lg text-muted-foreground">Here's your skill tracking overview.</p>
+    <div className="flex h-full flex-col gap-4 sm:gap-6">
+      <div className="space-y-1 sm:space-y-2">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Welcome back, {firstName}!</h1>
+        <p className="text-base sm:text-lg text-muted-foreground">Here's your skill tracking overview.</p>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <Card className="bento-card bento-card-info">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -93,9 +93,9 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <div className="flex-1 grid gap-4 md:grid-cols-2 lg:grid-cols-3 min-h-0">
-        {/* Large card spanning 2 columns */}
-        <Card className="bento-card bento-card-primary md:col-span-2 overflow-hidden flex flex-col">
+      <div className="flex-1 grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3 min-h-0">
+        {/* Large card spanning 2 columns on desktop */}
+        <Card className="bento-card bento-card-primary lg:col-span-2 overflow-hidden flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="rounded-2xl bg-primary/10 p-3">
@@ -155,10 +155,10 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="bento-card max-h-80 flex flex-col overflow-hidden">
-        <CardHeader>
-          <CardTitle className="text-2xl">Recent Documents</CardTitle>
-          <CardDescription>Your latest uploads</CardDescription>
+      <Card className="bento-card max-h-60 sm:max-h-80 flex flex-col overflow-hidden">
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="text-xl sm:text-2xl">Recent Documents</CardTitle>
+          <CardDescription className="text-sm">Your latest uploads</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto">
           <DocumentList documents={documents.slice(0, 5)} />

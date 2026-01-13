@@ -27,10 +27,12 @@ export default function SkillsPage() {
   }, [])
 
   return (
-    <div className="flex h-full flex-col gap-6">
+    <div className="flex h-full flex-col gap-4 sm:gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Skills</h1>
-        <p className="text-muted-foreground">View all skills automatically extracted from your documents</p>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Skills</h1>
+        <p className="text-muted-foreground text-sm sm:text-base">
+          View all skills automatically extracted from your documents
+        </p>
       </div>
 
       {isLoading ? (

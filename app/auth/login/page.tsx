@@ -55,15 +55,15 @@ export default function LoginPage() {
         </div>
       </header>
 
-      <div className="flex flex-1 items-center justify-center p-6 md:p-10">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6 md:p-10">
         <div className="w-full max-w-sm">
           <Card className="shadow-lg">
-            <CardHeader className="text-center space-y-2">
-              <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-              <CardDescription>Sign in to continue to SkillSync</CardDescription>
+            <CardHeader className="text-center space-y-1 sm:space-y-2 px-4 sm:px-6">
+              <CardTitle className="text-xl sm:text-2xl font-bold">Welcome back</CardTitle>
+              <CardDescription className="text-sm">Sign in to continue to SkillSync</CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
+            <CardContent className="px-4 sm:px-6">
+              <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input

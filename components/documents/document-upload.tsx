@@ -57,31 +57,31 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
 
   return (
     <Card className="elevation-2 material-transition hover:elevation-4">
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div
           {...getRootProps()}
-          className={`cursor-pointer rounded-2xl border-2 border-dashed p-12 text-center material-transition ${
+          className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 sm:p-12 text-center material-transition ${
             isDragActive ? "border-primary bg-primary/10 scale-[1.02]" : "border-muted-foreground/25"
           } ${isUploading ? "pointer-events-none opacity-50" : ""}`}
         >
           <input {...getInputProps()} />
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-3 sm:gap-4">
             {isUploading ? (
-              <Loader2 className="size-12 animate-spin text-primary" />
+              <Loader2 className="size-10 sm:size-12 animate-spin text-primary" />
             ) : (
-              <Upload className="size-12 text-primary" />
+              <Upload className="size-10 sm:size-12 text-primary" />
             )}
             <div>
-              <p className="text-lg font-semibold">
+              <p className="text-base sm:text-lg font-semibold">
                 {isUploading ? "Uploading..." : isDragActive ? "Drop your file here" : "Drag and drop your document"}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">or click to browse</p>
-              <p className="mt-3 text-xs text-muted-foreground">Supported formats: TXT, DOC, DOCX</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">or click to browse</p>
+              <p className="mt-2 sm:mt-3 text-xs text-muted-foreground">Supported formats: TXT, DOC, DOCX</p>
             </div>
           </div>
         </div>
         {error && (
-          <div className="mt-4 rounded-2xl bg-destructive/15 p-4 text-sm text-destructive elevation-1">
+          <div className="mt-3 sm:mt-4 rounded-2xl bg-destructive/15 p-3 sm:p-4 text-xs sm:text-sm text-destructive elevation-1">
             <p className="font-medium">{error}</p>
           </div>
         )}

@@ -64,30 +64,32 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4 sm:p-6">
       <Card className="w-full max-w-2xl shadow-2xl">
-        <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10">
-            <Sparkles className="size-8 text-primary" />
+        <CardHeader className="space-y-2 sm:space-y-3 text-center px-4 sm:px-6">
+          <div className="mx-auto flex size-12 sm:size-16 items-center justify-center rounded-full bg-primary/10">
+            <Sparkles className="size-6 sm:size-8 text-primary" />
           </div>
-          <CardTitle className="text-3xl">Welcome to SkillSync!</CardTitle>
-          <CardDescription className="text-base">
+          <CardTitle className="text-2xl sm:text-3xl">Welcome to SkillSync!</CardTitle>
+          <CardDescription className="text-sm sm:text-base">
             Let&apos;s personalize your learning journey in just a few steps
           </CardDescription>
-          <Progress value={progress} className="mt-4" />
+          <Progress value={progress} className="mt-3 sm:mt-4" />
           <p className="text-xs text-muted-foreground">
             Step {step} of {totalSteps}
           </p>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
           {step === 1 && (
-            <div className="space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-3 rounded-xl bg-primary/5 p-4">
-                <GraduationCap className="size-6 text-primary" />
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
+              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
+                <GraduationCap className="size-5 sm:size-6 text-primary flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold">Your Current Studies</h3>
-                  <p className="text-sm text-muted-foreground">Tell us what you&apos;re currently learning</p>
+                  <h3 className="font-semibold text-sm sm:text-base">Your Current Studies</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Tell us what you&apos;re currently learning
+                  </p>
                 </div>
               </div>
               <div className="space-y-2">
@@ -188,18 +190,18 @@ export default function OnboardingPage() {
 
           {error && <p className="text-sm text-destructive">{error}</p>}
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             {step > 1 && (
-              <Button type="button" variant="outline" onClick={handleBack} className="flex-1 bg-transparent">
+              <Button type="button" variant="outline" onClick={handleBack} className="w-full sm:flex-1 bg-transparent">
                 Back
               </Button>
             )}
             {step < totalSteps ? (
-              <Button type="button" onClick={handleNext} className="flex-1">
+              <Button type="button" onClick={handleNext} className="w-full sm:flex-1">
                 Next
               </Button>
             ) : (
-              <Button type="button" onClick={handleSubmit} disabled={isSubmitting} className="flex-1">
+              <Button type="button" onClick={handleSubmit} disabled={isSubmitting} className="w-full sm:flex-1">
                 {isSubmitting ? "Saving..." : "Complete Setup"}
               </Button>
             )}

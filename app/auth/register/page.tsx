@@ -55,13 +55,8 @@ export default function RegisterPage() {
 
       if (signUpError) throw signUpError
 
-      if (signUpData.user && !signUpData.session) {
-        setError("Please check your email to confirm your account, then sign in.")
-        setIsLoading(false)
-        return
-      }
-
-      if (signUpData.session) {
+      // Redirect directly to onboarding
+      if (signUpData.user) {
         window.location.href = "/onboarding"
       }
     } catch (error: unknown) {
@@ -84,16 +79,16 @@ export default function RegisterPage() {
         </div>
       </header>
 
-      <div className="flex flex-1 items-center justify-center p-6 md:p-10">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6 md:p-10">
         <div className="w-full max-w-sm">
           <Card className="shadow-lg">
-            <CardHeader className="text-center space-y-2">
-              <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
-              <CardDescription>Join SkillSync to track your skills</CardDescription>
+            <CardHeader className="text-center space-y-1 sm:space-y-2 px-4 sm:px-6">
+              <CardTitle className="text-xl sm:text-2xl font-bold">Create your account</CardTitle>
+              <CardDescription className="text-sm">Join SkillSync to track your skills</CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
+            <CardContent className="px-4 sm:px-6">
+              <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
                     <Input
