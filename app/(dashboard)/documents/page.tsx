@@ -31,7 +31,7 @@ export default function DocumentsPage() {
   }, [])
 
   return (
-    <div className="flex h-full flex-col gap-4 sm:gap-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Documents</h1>
         <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
@@ -54,14 +54,12 @@ export default function DocumentsPage() {
         />
       )}
 
-      <div className="flex-1 flex flex-col min-h-0">
+      <div>
         <h2 className="mb-3 sm:mb-4 text-xl sm:text-2xl font-semibold">Your Documents</h2>
         {isLoading ? (
           <p className="text-muted-foreground">Loading documents...</p>
         ) : (
-          <div className="flex-1 overflow-y-auto">
-            <DocumentList documents={documents} />
-          </div>
+          <DocumentList documents={documents} />
         )}
       </div>
     </div>

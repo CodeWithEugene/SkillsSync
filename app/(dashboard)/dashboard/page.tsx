@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   const firstName = user.user_metadata?.first_name || user.email?.split("@")[0] || "there"
 
   return (
-    <div className="flex h-full flex-col gap-4 sm:gap-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="space-y-1 sm:space-y-2">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Welcome back, {firstName}!</h1>
         <p className="text-base sm:text-lg text-muted-foreground">Here's your skill tracking overview.</p>
@@ -97,7 +97,7 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <div className="flex-1 grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3 min-h-0">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3">
         <Card className="bento-card bento-card-primary lg:col-span-2 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
           <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
             <div className="flex items-center gap-3">

@@ -27,7 +27,7 @@ export default function SkillsPage() {
   }, [])
 
   return (
-    <div className="flex h-full flex-col gap-4 sm:gap-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Skills</h1>
         <p className="text-muted-foreground text-sm sm:text-base">
@@ -35,13 +35,7 @@ export default function SkillsPage() {
         </p>
       </div>
 
-      {isLoading ? (
-        <p className="text-muted-foreground">Loading skills...</p>
-      ) : (
-        <div className="flex-1 overflow-y-auto">
-          <SkillsGrid skills={skills} />
-        </div>
-      )}
+      {isLoading ? <p className="text-muted-foreground">Loading skills...</p> : <SkillsGrid skills={skills} />}
     </div>
   )
 }

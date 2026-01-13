@@ -28,9 +28,9 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
   const pathname = usePathname()
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex min-h-screen bg-background">
       <aside
-        className={`hidden md:flex md:flex-col border-r bg-sidebar transition-all duration-300 ease-in-out ${
+        className={`hidden md:flex md:flex-col border-r bg-sidebar transition-all duration-300 ease-in-out sticky top-0 h-screen ${
           collapsed ? "w-20" : "w-64"
         }`}
       >
@@ -96,7 +96,7 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col">
         {/* Mobile Header */}
         <header className="flex items-center justify-between border-b bg-background p-4 md:hidden h-16">
           <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">{children}</main>
+        <main className="flex-1 p-4 md:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   )
