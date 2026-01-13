@@ -1,7 +1,7 @@
 import { requireAuth } from "@/lib/supabase-auth"
 import { getDocuments, getExtractedSkills, getUserGoal } from "@/lib/db"
 import { DocumentList } from "@/components/documents/document-list"
-import { FileText, Lightbulb, CheckCircle, Clock, Target, GraduationCap } from "lucide-react"
+import { FileText, Lightbulb, CheckCircle, Clock } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { redirect } from "next/navigation"
 
@@ -18,9 +18,6 @@ export default async function DashboardPage() {
 
   const completedDocs = documents.filter((doc) => doc.status === "COMPLETED").length
   const processingDocs = documents.filter((doc) => doc.status === "PROCESSING").length
-
-  // Get unique skill categories
-  const categories = new Set(skills.map((s) => s.category).filter(Boolean))
 
   const firstName = user.user_metadata?.first_name || user.email?.split("@")[0] || "there"
 
@@ -93,75 +90,6 @@ export default async function DashboardPage() {
             <p className="text-xs text-muted-foreground group-hover:text-primary-foreground/80 mt-1">
               Currently analyzing
             </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="bento-card bento-card-primary md:col-span-2 lg:col-span-2 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
-          <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-primary/10 p-3 flex-shrink-0">
-                <Target className="size-6 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <CardTitle className="text-base sm:text-lg md:text-xl truncate leading-tight">Career Goal</CardTitle>
-                <CardDescription className="text-xs sm:text-sm truncate leading-tight mt-0.5">
-                  Your target career path
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 space-y-3 sm:space-y-4 overflow-y-auto min-h-0">
-            <div className="rounded-2xl bg-background/50 p-3 sm:p-4">
-              <p className="text-lg sm:text-xl md:text-2xl font-bold text-foreground line-clamp-2">
-                {userGoal.careerGoal || "Not set"}
-              </p>
-            </div>
-            {userGoal.skillGoal && (
-              <div className="rounded-2xl bg-background/50 p-3 sm:p-4">
-                <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Target Skills</p>
-                <p className="text-sm sm:text-base text-foreground line-clamp-3">{userGoal.skillGoal}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bento-card bento-card-accent md:col-span-2 lg:col-span-1 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
-          <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-accent/10 p-3 flex-shrink-0">
-                <GraduationCap className="size-6 text-accent" />
-              </div>
-              <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <CardTitle className="text-base sm:text-lg md:text-xl truncate leading-tight">
-                  Learning Journey
-                </CardTitle>
-                <CardDescription className="text-xs sm:text-sm truncate leading-tight mt-0.5">
-                  Your study path
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 space-y-2 sm:space-y-3 overflow-y-auto min-h-0">
-            {userGoal.currentStudy && (
-              <div className="rounded-2xl bg-background/50 p-3">
-                <p className="text-xs font-medium text-muted-foreground mb-1.5">Currently Learning</p>
-                <p className="text-sm text-foreground font-medium line-clamp-2">{userGoal.currentStudy}</p>
-              </div>
-            )}
-            {userGoal.wantToStudy && (
-              <div className="rounded-2xl bg-background/50 p-3">
-                <p className="text-xs font-medium text-muted-foreground mb-1.5">Next Goals</p>
-                <p className="text-sm text-foreground font-medium line-clamp-2">{userGoal.wantToStudy}</p>
-              </div>
-            )}
-            {userGoal.studyDuration && (
-              <div className="rounded-2xl bg-background/50 p-3">
-                <p className="text-xs font-medium text-muted-foreground mb-1.5">Timeline</p>
-                <p className="text-sm text-foreground font-medium line-clamp-2">{userGoal.studyDuration}</p>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

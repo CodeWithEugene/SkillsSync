@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, LayoutDashboard, FileText, Lightbulb, User } from "lucide-react"
+import { Menu, LayoutDashboard, FileText, Lightbulb, User, Target } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LogoutButton } from "@/components/auth/logout-button"
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/goals", label: "Goals", icon: Target },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/skills", label: "Skills", icon: Lightbulb },
   { href: "/profile", label: "Profile", icon: User },
@@ -71,7 +72,6 @@ export function MobileNav() {
         <div className="border-t pt-4">
           <LogoutButton />
         </div>
-        {/* </CHANGE> */}
       </SheetContent>
     </Sheet>
   )

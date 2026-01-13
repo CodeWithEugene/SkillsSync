@@ -5,13 +5,14 @@ import { useState } from "react"
 import { MobileNav } from "@/components/dashboard/mobile-nav"
 import { LogoutButton } from "@/components/auth/logout-button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { LayoutDashboard, FileText, Lightbulb, User, ChevronLeft, ChevronRight } from "lucide-react"
+import { LayoutDashboard, FileText, Lightbulb, User, ChevronLeft, ChevronRight, Target } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/goals", label: "Goals", icon: Target },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/skills", label: "Skills", icon: Lightbulb },
   { href: "/profile", label: "Profile", icon: User },
