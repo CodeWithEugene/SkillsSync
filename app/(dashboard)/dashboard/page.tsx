@@ -98,60 +98,62 @@ export default async function DashboardPage() {
       </div>
 
       <div className="flex-1 grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3 min-h-0">
-        <Card className="bento-card bento-card-primary lg:col-span-2 overflow-hidden flex flex-col">
-          <CardHeader className="pb-3 sm:pb-4">
+        <Card className="bento-card bento-card-primary lg:col-span-2 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
+          <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="rounded-2xl bg-primary/10 p-3">
                 <Target className="size-6 text-primary" />
               </div>
-              <div className="flex-1">
-                <CardTitle className="text-lg sm:text-xl">Career Goal</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">Your target career path</CardDescription>
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-lg sm:text-xl truncate">Career Goal</CardTitle>
+                <CardDescription className="text-xs sm:text-sm truncate">Your target career path</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="flex-1 space-y-3 sm:space-y-4">
+          <CardContent className="flex-1 space-y-3 sm:space-y-4 overflow-y-auto min-h-0">
             <div className="rounded-2xl bg-background/50 p-4">
-              <p className="text-xl sm:text-2xl font-bold text-foreground">{userGoal.careerGoal || "Not set"}</p>
+              <p className="text-xl sm:text-2xl font-bold text-foreground line-clamp-2">
+                {userGoal.careerGoal || "Not set"}
+              </p>
             </div>
             {userGoal.skillGoal && (
               <div className="rounded-2xl bg-background/50 p-3 sm:p-4">
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Target Skills</p>
-                <p className="text-sm sm:text-base text-foreground">{userGoal.skillGoal}</p>
+                <p className="text-sm sm:text-base text-foreground line-clamp-3">{userGoal.skillGoal}</p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        <Card className="bento-card bento-card-accent overflow-hidden flex flex-col">
-          <CardHeader className="pb-3 sm:pb-4">
+        <Card className="bento-card bento-card-accent overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
+          <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="rounded-2xl bg-accent/10 p-3">
                 <GraduationCap className="size-6 text-accent" />
               </div>
-              <div className="flex-1">
-                <CardTitle className="text-lg sm:text-xl">Learning Journey</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">Your study path</CardDescription>
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-lg sm:text-xl truncate">Learning Journey</CardTitle>
+                <CardDescription className="text-xs sm:text-sm truncate">Your study path</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="flex-1 space-y-2 sm:space-y-3">
+          <CardContent className="flex-1 space-y-2 sm:space-y-3 overflow-y-auto min-h-0">
             {userGoal.currentStudy && (
               <div className="rounded-2xl bg-background/50 p-3">
                 <p className="text-xs font-medium text-muted-foreground mb-1.5">Currently Learning</p>
-                <p className="text-sm text-foreground font-medium">{userGoal.currentStudy}</p>
+                <p className="text-sm text-foreground font-medium line-clamp-2">{userGoal.currentStudy}</p>
               </div>
             )}
             {userGoal.wantToStudy && (
               <div className="rounded-2xl bg-background/50 p-3">
                 <p className="text-xs font-medium text-muted-foreground mb-1.5">Next Goals</p>
-                <p className="text-sm text-foreground font-medium">{userGoal.wantToStudy}</p>
+                <p className="text-sm text-foreground font-medium line-clamp-2">{userGoal.wantToStudy}</p>
               </div>
             )}
             {userGoal.studyDuration && (
               <div className="rounded-2xl bg-background/50 p-3">
                 <p className="text-xs font-medium text-muted-foreground mb-1.5">Timeline</p>
-                <p className="text-sm text-foreground font-medium">{userGoal.studyDuration}</p>
+                <p className="text-sm text-foreground font-medium line-clamp-2">{userGoal.studyDuration}</p>
               </div>
             )}
           </CardContent>
