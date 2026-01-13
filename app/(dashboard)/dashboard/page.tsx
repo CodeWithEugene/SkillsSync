@@ -97,15 +97,15 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3">
-        <Card className="bento-card bento-card-primary lg:col-span-2 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="bento-card bento-card-primary md:col-span-2 lg:col-span-2 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
           <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="rounded-2xl bg-primary/10 p-3 flex-shrink-0">
                 <Target className="size-6 text-primary" />
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <CardTitle className="text-lg sm:text-xl truncate leading-tight">Career Goal</CardTitle>
+                <CardTitle className="text-base sm:text-lg md:text-xl truncate leading-tight">Career Goal</CardTitle>
                 <CardDescription className="text-xs sm:text-sm truncate leading-tight mt-0.5">
                   Your target career path
                 </CardDescription>
@@ -113,8 +113,8 @@ export default async function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 space-y-3 sm:space-y-4 overflow-y-auto min-h-0">
-            <div className="rounded-2xl bg-background/50 p-4">
-              <p className="text-xl sm:text-2xl font-bold text-foreground line-clamp-2">
+            <div className="rounded-2xl bg-background/50 p-3 sm:p-4">
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-foreground line-clamp-2">
                 {userGoal.careerGoal || "Not set"}
               </p>
             </div>
@@ -127,14 +127,16 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bento-card bento-card-accent overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
+        <Card className="bento-card bento-card-accent md:col-span-2 lg:col-span-1 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[350px]">
           <CardHeader className="pb-3 sm:pb-4 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="rounded-2xl bg-accent/10 p-3 flex-shrink-0">
                 <GraduationCap className="size-6 text-accent" />
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <CardTitle className="text-lg sm:text-xl truncate leading-tight">Learning Journey</CardTitle>
+                <CardTitle className="text-base sm:text-lg md:text-xl truncate leading-tight">
+                  Learning Journey
+                </CardTitle>
                 <CardDescription className="text-xs sm:text-sm truncate leading-tight mt-0.5">
                   Your study path
                 </CardDescription>
