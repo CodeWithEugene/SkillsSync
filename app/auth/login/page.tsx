@@ -21,7 +21,7 @@ export default function LoginPage() {
   const router = useRouter()
 
   useEffect(() => {
-    document.title = "SkillSync - Sign In"
+    document.title = "Sign In | SkillSync"
   }, [])
 
   const handleLogin = async (e: React.FormEvent) => {

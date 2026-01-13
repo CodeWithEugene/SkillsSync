@@ -6,7 +6,7 @@ import { User, Mail, Calendar, CheckCircle } from "lucide-react"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "SkillSync - Profile",
+  title: "Profile",
 }
 
 export default async function ProfilePage() {

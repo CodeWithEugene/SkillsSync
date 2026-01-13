@@ -22,7 +22,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    document.title = "SkillSync - Create Account"
+    document.title = "Create Account | SkillSync"
   }, [])
 
   const handleRegister = async (e: React.FormEvent) => {

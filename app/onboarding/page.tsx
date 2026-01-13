@@ -28,7 +28,7 @@ export default function OnboardingPage() {
   const progress = (step / totalSteps) * 100
 
   useEffect(() => {
-    document.title = "SkillSync - Welcome"
+    document.title = "Welcome | SkillSync"
   }, [])
 
   const handleNext = () => {

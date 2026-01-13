@@ -9,7 +9,7 @@ export default function SkillsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    document.title = "SkillSync - Skills"
+    document.title = "Skills | SkillSync"
   }, [])
 
   useEffect(() => {

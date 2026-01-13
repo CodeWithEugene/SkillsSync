@@ -13,7 +13,7 @@ export default function DocumentsPage() {
   const [showUpload, setShowUpload] = useState(false)
 
   useEffect(() => {
-    document.title = "SkillSync - Documents"
+    document.title = "Documents | SkillSync"
   }, [])
 
   const fetchDocuments = async () => {

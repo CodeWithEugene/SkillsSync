@@ -9,15 +9,22 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SkillSync - AI-Powered Skill Tracking",
+  title: {
+    default: "SkillSync - AI-Powered Skill Tracking",
+    template: "%s | SkillSync",
+  },
   description:
     "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
   generator: "v0.app",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
+    ],
+    shortcut: { url: "/favicon.svg", type: "image/svg+xml" },
+    apple: { url: "/favicon.svg", type: "image/svg+xml" },
   },
+  manifest: "/site.webmanifest",
 }
 
 export default function RootLayout({
@@ -27,6 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
       <body className={`font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="skillsync-theme">
           {children}
