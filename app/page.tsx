@@ -54,7 +54,12 @@ export default async function HomePage() {
                 <Button size="default" className="w-full sm:w-auto" asChild>
                   <Link href="/auth/register">Get Started Free</Link>
                 </Button>
-                <Button size="default" variant="outline" className="w-full sm:w-auto bg-transparent" asChild>
+                <Button
+                  size="default"
+                  variant="outline"
+                  className="w-full sm:w-auto bg-transparent hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
+                  asChild
+                >
                   <Link href="/auth/login">Sign In</Link>
                 </Button>
               </div>
@@ -62,47 +67,49 @@ export default async function HomePage() {
 
             {/* Feature Cards - Compact 4-column grid */}
             <div className="grid gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
-              <Card className="bento-card bento-card-primary hover:scale-105 transition-transform duration-200">
+              <Card className="bento-card bento-card-primary hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-primary/10 p-2 w-fit mb-3">
-                    <Upload className="size-6 text-primary" />
+                  <div className="rounded-xl bg-primary/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
+                    <Upload className="size-6 text-primary group-hover:text-primary-foreground" />
                   </div>
-                  <CardTitle className="text-lg">Upload Documents</CardTitle>
-                  <CardDescription className="text-sm">Drop your coursework, projects, or any document</CardDescription>
+                  <CardTitle className="text-lg group-hover:text-primary-foreground">Upload Documents</CardTitle>
+                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
+                    Drop your coursework, projects, or any document
+                  </CardDescription>
                 </CardHeader>
               </Card>
 
-              <Card className="bento-card bento-card-accent hover:scale-105 transition-transform duration-200">
+              <Card className="bento-card bento-card-accent hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-accent/10 p-2 w-fit mb-3">
-                    <Sparkles className="size-6 text-accent" />
+                  <div className="rounded-xl bg-accent/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
+                    <Sparkles className="size-6 text-accent group-hover:text-primary-foreground" />
                   </div>
-                  <CardTitle className="text-lg">AI Analysis</CardTitle>
-                  <CardDescription className="text-sm">
+                  <CardTitle className="text-lg group-hover:text-primary-foreground">AI Analysis</CardTitle>
+                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
                     Our AI extracts skills and competencies automatically
                   </CardDescription>
                 </CardHeader>
               </Card>
 
-              <Card className="bento-card bento-card-success hover:scale-105 transition-transform duration-200">
+              <Card className="bento-card bento-card-success hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-success/10 p-2 w-fit mb-3">
-                    <TrendingUp className="size-6 text-success" />
+                  <div className="rounded-xl bg-success/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
+                    <TrendingUp className="size-6 text-success group-hover:text-primary-foreground" />
                   </div>
-                  <CardTitle className="text-lg">Track Progress</CardTitle>
-                  <CardDescription className="text-sm">
+                  <CardTitle className="text-lg group-hover:text-primary-foreground">Track Progress</CardTitle>
+                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
                     View your skills organized by category and confidence
                   </CardDescription>
                 </CardHeader>
               </Card>
 
-              <Card className="bento-card bento-card-info hover:scale-105 transition-transform duration-200">
+              <Card className="bento-card bento-card-info hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
                 <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-info/10 p-2 w-fit mb-3">
-                    <Lock className="size-6 text-info" />
+                  <div className="rounded-xl bg-info/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
+                    <Lock className="size-6 text-info group-hover:text-primary-foreground" />
                   </div>
-                  <CardTitle className="text-lg">Secure & Private</CardTitle>
-                  <CardDescription className="text-sm">
+                  <CardTitle className="text-lg group-hover:text-primary-foreground">Secure & Private</CardTitle>
+                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
                     Your data is encrypted and only accessible by you
                   </CardDescription>
                 </CardHeader>

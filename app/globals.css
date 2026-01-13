@@ -174,4 +174,40 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+
+  /* Custom blue scrollbar for Recent Documents card */
+  .scrollbar-primary {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.45 0.18 250) transparent;
+  }
+
+  .scrollbar-primary::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-primary::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-primary::-webkit-scrollbar-thumb {
+    background-color: oklch(0.45 0.18 250);
+    border-radius: 20px;
+  }
+
+  .scrollbar-primary::-webkit-scrollbar-thumb:hover {
+    background-color: oklch(0.5 0.2 250);
+  }
+
+  /* Dark mode scrollbar */
+  .dark .scrollbar-primary {
+    scrollbar-color: oklch(0.65 0.2 250) transparent;
+  }
+
+  .dark .scrollbar-primary::-webkit-scrollbar-thumb {
+    background-color: oklch(0.65 0.2 250);
+  }
+
+  .dark .scrollbar-primary::-webkit-scrollbar-thumb:hover {
+    background-color: oklch(0.7 0.22 250);
+  }
 }

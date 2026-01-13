@@ -36,30 +36,25 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between border-b p-4 h-16">
-          {!collapsed && (
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            {!collapsed && (
+              <>
+                <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Lightbulb className="size-4" />
+                </div>
+                <span className="font-bold text-lg">SkillSync</span>
+              </>
+            )}
+            {collapsed && (
               <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <Lightbulb className="size-4" />
               </div>
-              <span className="font-bold text-lg">SkillSync</span>
-            </div>
-          )}
-          {collapsed && (
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground mx-auto">
-              <Lightbulb className="size-4" />
-            </div>
-          )}
-        </div>
-
-        {/* User Info */}
-        {!collapsed && (
-          <div className="border-b p-4">
-            <div className="rounded-lg bg-gradient-to-br from-primary/10 to-accent/5 p-3 border border-primary/20">
-              <p className="text-xs text-muted-foreground">Welcome back,</p>
-              <p className="font-semibold text-foreground">{firstName}</p>
-            </div>
+            )}
           </div>
-        )}
+          <Button variant="ghost" size="icon" onClick={() => setCollapsed(!collapsed)} className="size-8 shrink-0">
+            {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
+          </Button>
+        </div>
 
         {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1">
@@ -97,9 +92,6 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
               <ThemeToggle />
             </div>
           )}
-          <Button variant="ghost" size="sm" onClick={() => setCollapsed(!collapsed)} className="w-full justify-center">
-            {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
-          </Button>
         </div>
       </aside>
 
