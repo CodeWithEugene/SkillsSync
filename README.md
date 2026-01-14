@@ -3,24 +3,24 @@
   
   **AI-Powered Skill Extraction & Tracking Platform**
 
-  [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-  [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-  
-  [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-skillsyncglobal.vercel.app-blue?style=for-the-badge)](https://skillsyncglobal.vercel.app)
-  [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-skillsyncglobal.vercel.app-blue?style=for-the-badge)](https://skillsyncglobal.vercel.app)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
   <p align="center">
     <strong>Transform your documents into valuable skills with AI-powered analysis.</strong><br/>
     Track your professional development effortlessly.
   </p>
 
-  [Features](#-features) •
-  [Tech Stack](#-tech-stack) •
-  [Getting Started](#-getting-started) •
-  [Project Structure](#-project-structure) •
-  [Contributing](#-contributing)
+[Features](#-features) •
+[Tech Stack](#-tech-stack) •
+[Getting Started](#-getting-started) •
+[Project Structure](#-project-structure) •
+[Contributing](#-contributing)
 
 </div>
 
@@ -31,35 +31,29 @@
 <table>
   <tr>
     <td align="center" width="33%">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/upload.svg" width="48" height="48" alt="Upload"/>
-      <br/><strong>📄 Document Upload</strong>
+      <img src="https://img.shields.io/badge/📄-Document_Upload-0190fe?style=for-the-badge" alt="Upload"/>
       <br/><sub>Upload coursework, projects, certifications, and any educational documents</sub>
     </td>
     <td align="center" width="33%">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg" width="48" height="48" alt="AI"/>
-      <br/><strong>🤖 AI-Powered Analysis</strong>
+      <img src="https://img.shields.io/badge/🤖-AI_Analysis-0190fe?style=for-the-badge" alt="AI"/>
       <br/><sub>Automatic skill extraction using advanced AI models</sub>
     </td>
     <td align="center" width="33%">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/trending-up.svg" width="48" height="48" alt="Track"/>
-      <br/><strong>📊 Skill Tracking</strong>
+      <img src="https://img.shields.io/badge/📊-Skill_Tracking-0190fe?style=for-the-badge" alt="Track"/>
       <br/><sub>View skills organized by category with confidence scores</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="33%">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/target.svg" width="48" height="48" alt="Goals"/>
-      <br/><strong>🎯 Goal Setting</strong>
+      <img src="https://img.shields.io/badge/🎯-Goal_Setting-0190fe?style=for-the-badge" alt="Goals"/>
       <br/><sub>Set and track your career and learning goals</sub>
     </td>
     <td align="center" width="33%">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/lock.svg" width="48" height="48" alt="Secure"/>
-      <br/><strong>🔐 Secure & Private</strong>
+      <img src="https://img.shields.io/badge/🔐-Secure_&_Private-0190fe?style=for-the-badge" alt="Secure"/>
       <br/><sub>Your data is encrypted and accessible only by you</sub>
     </td>
     <td align="center" width="33%">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sun-moon.svg" width="48" height="48" alt="Theme"/>
-      <br/><strong>🌓 Dark/Light Mode</strong>
+      <img src="https://img.shields.io/badge/🌓-Dark/Light_Mode-0190fe?style=for-the-badge" alt="Theme"/>
       <br/><sub>Beautiful UI with system theme support</sub>
     </td>
   </tr>
@@ -70,25 +64,28 @@
 ## 🛠 Tech Stack
 
 ### Frontend
-| Technology | Description |
-|------------|-------------|
-| ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js) | React framework with App Router |
-| ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react) | UI library |
-| ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript) | Type-safe JavaScript |
-| ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?logo=tailwind-css) | Utility-first CSS framework |
-| ![Radix UI](https://img.shields.io/badge/Radix_UI-Components-161618?logo=radix-ui) | Accessible UI primitives |
+
+| Technology                                                                         | Description                     |
+| ---------------------------------------------------------------------------------- | ------------------------------- |
+| ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)             | React framework with App Router |
+| ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)                  | UI library                      |
+| ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)    | Type-safe JavaScript            |
+| ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?logo=tailwind-css)  | Utility-first CSS framework     |
+| ![Radix UI](https://img.shields.io/badge/Radix_UI-Components-161618?logo=radix-ui) | Accessible UI primitives        |
 
 ### Backend & Database
-| Technology | Description |
-|------------|-------------|
+
+| Technology                                                                        | Description                          |
+| --------------------------------------------------------------------------------- | ------------------------------------ |
 | ![Supabase](https://img.shields.io/badge/Supabase-Auth_&_DB-3ECF8E?logo=supabase) | PostgreSQL database & authentication |
-| ![OpenAI](https://img.shields.io/badge/OpenAI-API-412991?logo=openai) | AI-powered skill extraction |
+| ![OpenAI](https://img.shields.io/badge/OpenAI-API-412991?logo=openai)             | AI-powered skill extraction          |
 
 ### Deployment & Analytics
-| Technology | Description |
-|------------|-------------|
-| ![Vercel](https://img.shields.io/badge/Vercel-Hosting-black?logo=vercel) | Deployment platform |
-| ![Vercel Analytics](https://img.shields.io/badge/Vercel-Analytics-black?logo=vercel) | Usage analytics |
+
+| Technology                                                                           | Description         |
+| ------------------------------------------------------------------------------------ | ------------------- |
+| ![Vercel](https://img.shields.io/badge/Vercel-Hosting-black?logo=vercel)             | Deployment platform |
+| ![Vercel Analytics](https://img.shields.io/badge/Vercel-Analytics-black?logo=vercel) | Usage analytics     |
 
 ---
 
@@ -104,35 +101,39 @@
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/skillsync.git
    cd skillsync
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Set up environment variables**
-   
+
    Create a `.env` file in the root directory:
+
    ```env
    # Supabase
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   
+
    # OpenAI (or compatible API)
    OPENAI_API_KEY=your_openai_api_key
    OPENAI_BASE_URL=https://api.openai.com/v1  # or custom endpoint
-   
+
    # App URL
    NEXT_PUBLIC_APP_URL=http://localhost:3000
    ```
 
 4. **Set up the database**
-   
+
    Run the following SQL in your Supabase SQL editor:
+
    ```sql
    -- Documents table
    CREATE TABLE documents (
@@ -172,12 +173,13 @@
    ```
 
 5. **Run the development server**
+
    ```bash
    pnpm dev
    ```
 
 6. **Open your browser**
-   
+
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ---
@@ -230,6 +232,7 @@ skillsync/
 ### 🎯 Goal Tracking
 
 Users can set and track:
+
 - **Career Goals** - Ultimate career aspirations
 - **Current Studies** - What they're currently learning
 - **Skill Goals** - Specific skills they want to develop
