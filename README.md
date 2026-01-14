@@ -1,7 +1,5 @@
 <div align="center">
-  <img src="public/logo.png" alt="SkillSync Logo" width="120" height="120" />
-  
-  # SkillSync
+  <img src="public/logo.png" alt="SkillSync Logo"  />
   
   **AI-Powered Skill Extraction & Tracking Platform**
 
