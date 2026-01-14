@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, LayoutDashboard, FileText, Lightbulb, User, Target } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { LogoutButton } from "@/components/auth/logout-button"
 import { cn } from "@/lib/utils"
@@ -29,13 +30,13 @@ export function MobileNav() {
       <SheetContent side="left" className="w-80 p-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-              <Lightbulb className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold">SkillSync</h2>
-              <p className="text-xs text-muted-foreground">AI-Powered Learning</p>
-            </div>
+            <Image
+              src="/logo.png"
+              alt="SkillSync Logo"
+              width={192}
+              height={192}
+              className="rounded-2xl"
+            />
           </div>
         </div>
 

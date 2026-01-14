@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, Sparkles, TrendingUp, Lock } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { getCurrentUser } from "@/lib/supabase-auth"
 import { redirect } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -19,8 +20,7 @@ export default async function HomePage() {
       <header className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto flex h-14 items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2">
-            <Sparkles className="size-5 text-primary" />
-            <span className="text-lg font-bold">SkillSync</span>
+            <Image src="/logo.png" alt="SkillSync Logo" width={160} height={160} className="rounded-md" />
           </Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />
@@ -57,7 +57,7 @@ export default async function HomePage() {
                 <Button
                   size="default"
                   variant="outline"
-                  className="w-full sm:w-auto bg-transparent hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
+                  className="w-full sm:w-auto bg-transparent hover:bg-primary hover:text-white hover:border-primary transition-all"
                   asChild
                 >
                   <Link href="/auth/login">Sign In</Link>

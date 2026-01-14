@@ -16,6 +16,31 @@ export const metadata: Metadata = {
   description:
     "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
   generator: "v0.app",
+  metadataBase: new URL("https://skillsyncglobal.vercel.app"),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://skillsyncglobal.vercel.app",
+    siteName: "SkillSync",
+    title: "SkillSync - AI-Powered Skill Tracking",
+    description:
+      "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 128,
+        height: 128,
+        alt: "SkillSync Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "SkillSync - AI-Powered Skill Tracking",
+    description:
+      "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
+    images: ["/logo.png"],
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },

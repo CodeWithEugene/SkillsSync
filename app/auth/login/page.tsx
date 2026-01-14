@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sparkles, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
@@ -74,10 +75,13 @@ export default function LoginPage() {
       <header className="border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform group-hover:scale-110">
-              <Sparkles className="size-4" />
-            </div>
-            <span className="text-xl font-bold">SkillSync</span>
+            <Image
+              src="/logo.png"
+              alt="SkillSync Logo"
+              width={160}
+              height={160}
+              className="rounded-lg transition-transform group-hover:scale-110"
+            />
           </Link>
           <ThemeToggle />
         </div>
@@ -95,7 +99,7 @@ export default function LoginPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full transition-all hover:scale-[1.02] bg-transparent"
+                  className="w-full transition-all hover:scale-[1.02] bg-transparent hover:text-foreground"
                   onClick={handleGoogleSignIn}
                   disabled={isGoogleLoading || isLoading}
                 >

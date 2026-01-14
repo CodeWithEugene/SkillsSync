@@ -6,6 +6,7 @@ import { MobileNav } from "@/components/dashboard/mobile-nav"
 import { LogoutButton } from "@/components/auth/logout-button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { LayoutDashboard, FileText, Lightbulb, User, ChevronLeft, ChevronRight, Target } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -31,25 +32,29 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
   return (
     <div className="flex min-h-screen bg-background">
       <aside
-        className={`hidden md:flex md:flex-col border-r bg-sidebar transition-all duration-300 ease-in-out sticky top-0 h-screen ${
-          collapsed ? "w-20" : "w-64"
-        }`}
+        className={`hidden md:flex md:flex-col border-r bg-sidebar transition-all duration-300 ease-in-out sticky top-0 h-screen ${collapsed ? "w-20" : "w-64"
+          }`}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between border-b p-4 h-16">
           <div className="flex items-center gap-2">
             {!collapsed && (
-              <>
-                <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Lightbulb className="size-4" />
-                </div>
-                <span className="font-bold text-lg">SkillSync</span>
-              </>
+              <Image
+                src="/logo.png"
+                alt="SkillSync Logo"
+                width={160}
+                height={160}
+                className="rounded-lg"
+              />
             )}
             {collapsed && (
-              <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Lightbulb className="size-4" />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="SkillSync Logo"
+                width={160}
+                height={160}
+                className="rounded-lg"
+              />
             )}
           </div>
           <Button variant="ghost" size="icon" onClick={() => setCollapsed(!collapsed)} className="size-8 shrink-0">
@@ -65,9 +70,8 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
             return (
               <Link key={item.href} href={item.href}>
                 <div
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all hover:bg-sidebar-accent group ${
-                    isActive ? "bg-primary text-primary-foreground" : ""
-                  } ${collapsed ? "justify-center" : ""}`}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all hover:bg-sidebar-accent group ${isActive ? "bg-primary text-primary-foreground" : ""
+                    } ${collapsed ? "justify-center" : ""}`}
                 >
                   <Icon className={`size-5 ${isActive ? "" : "group-hover:text-primary"}`} />
                   {!collapsed && <span className="font-medium">{item.label}</span>}
@@ -101,10 +105,13 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
         {/* Mobile Header */}
         <header className="flex items-center justify-between border-b bg-background p-4 md:hidden h-16">
           <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Lightbulb className="size-4" />
-            </div>
-            <h1 className="font-bold">SkillSync</h1>
+            <Image
+              src="/logo.png"
+              alt="SkillSync Logo"
+              width={160}
+              height={160}
+              className="rounded-lg"
+            />
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
