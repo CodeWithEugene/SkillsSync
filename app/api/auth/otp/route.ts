@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 
 const EMAIL_USER = process.env.GMAIL_USER
 const EMAIL_PASS = process.env.GMAIL_APP_PASSWORD
@@ -158,6 +159,29 @@ export async function POST(request: NextRequest) {
     
     const userId = users[0].id
     
+    // Use admin client to generate auth tokens
+    const adminClient = createAdminClient()
+    const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
+      type: 'magiclink',
+      email: email,
+    })
+    
+    if (linkError || !linkData) {
+      console.error("Failed to generate auth link:", linkError)
+      return NextResponse.json({ error: "Failed to create authentication session" }, { status: 500 })
+    }
+    
+    // Extract tokens from the action link
+    const actionLink = linkData.properties.action_link
+    const url = new URL(actionLink)
+    const accessToken = url.searchParams.get('access_token')
+    const refreshToken = url.searchParams.get('refresh_token')
+    
+    if (!accessToken || !refreshToken) {
+      console.error("Failed to extract tokens from action link")
+      return NextResponse.json({ error: "Failed to create authentication session" }, { status: 500 })
+    }
+    
     // Check if user has completed onboarding
     const { data: userGoal } = await supabase
       .from("user_goals")
@@ -168,8 +192,15 @@ export async function POST(request: NextRequest) {
     // Determine redirect path based on onboarding status
     const redirectPath = userGoal?.onboarding_completed ? "/dashboard" : "/onboarding"
     
-    // OTP verified successfully
-    return NextResponse.json({ success: true, redirect: redirectPath })
+    // Return session tokens so client can establish session
+    return NextResponse.json({ 
+      success: true, 
+      redirect: redirectPath,
+      session: {
+        access_token: accessToken,
+        refresh_token: refreshToken
+      }
+    })
   }
 
   return NextResponse.json({ error: "Invalid action" }, { status: 400 })
