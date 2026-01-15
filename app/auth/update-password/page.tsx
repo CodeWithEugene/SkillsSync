@@ -21,11 +21,25 @@ export default function UpdatePasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [countdown, setCountdown] = useState(3)
   const router = useRouter()
 
   useEffect(() => {
     document.title = "Update Password | SkillSync"
   }, [])
+
+  // Countdown and redirect after success
+  useEffect(() => {
+    if (success && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else if (success && countdown === 0) {
+      router.push("/auth/login")
+    }
+  }, [success, countdown, router])
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,8 +69,8 @@ export default function UpdatePasswordPage() {
       
       if (error) throw error
 
-      // Redirect to login page with success message
-      router.push("/auth/login?message=Password updated successfully")
+      // Show success message and start countdown
+      setSuccess(true)
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
@@ -91,7 +105,31 @@ export default function UpdatePasswordPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="px-4 sm:px-6">
-              <form onSubmit={handleUpdatePassword} className="space-y-4">
+              {success ? (
+                <div className="space-y-4">
+                  <div className="rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 p-6 flex flex-col items-center gap-4">
+                    <CheckCircle2 className="size-16 text-green-600 dark:text-green-400" />
+                    <div className="text-center">
+                      <p className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
+                        Password Updated Successfully!
+                      </p>
+                      <p className="text-sm text-green-700 dark:text-green-300">
+                        Your password has been reset. You can now sign in with your new password.
+                      </p>
+                      <p className="text-sm text-green-600 dark:text-green-400 mt-4 font-medium">
+                        Redirecting to login in {countdown} second{countdown !== 1 ? 's' : ''}...
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => router.push("/auth/login")}
+                    className="w-full"
+                  >
+                    Go to Login Now
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleUpdatePassword} className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">New Password</Label>
@@ -172,6 +210,7 @@ export default function UpdatePasswordPage() {
                   )}
                 </Button>
               </form>
+              )}
             </CardContent>
           </Card>
         </div>
