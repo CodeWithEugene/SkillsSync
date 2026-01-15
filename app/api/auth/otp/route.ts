@@ -161,25 +161,60 @@ export async function POST(request: NextRequest) {
     
     // Use admin client to generate auth tokens
     const adminClient = createAdminClient()
+    console.log("Attempting to generate auth link for user:", userId)
+    
     const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
       type: 'magiclink',
       email: email,
     })
     
-    if (linkError || !linkData) {
-      console.error("Failed to generate auth link:", linkError)
-      return NextResponse.json({ error: "Failed to create authentication session" }, { status: 500 })
+    if (linkError) {
+      console.error("Failed to generate auth link - Error details:", {
+        message: linkError.message,
+        status: linkError.status,
+        name: linkError.name
+      })
+      return NextResponse.json({ 
+        error: `Failed to create authentication session: ${linkError.message}` 
+      }, { status: 500 })
     }
+    
+    if (!linkData) {
+      console.error("No link data returned from generateLink")
+      return NextResponse.json({ error: "Failed to create authentication session: No data returned" }, { status: 500 })
+    }
+    
+    console.log("Auth link generated successfully")
     
     // Extract tokens from the action link
     const actionLink = linkData.properties.action_link
+    console.log("Action link structure:", { hasActionLink: !!actionLink, link: actionLink })
+    
     const url = new URL(actionLink)
-    const accessToken = url.searchParams.get('access_token')
-    const refreshToken = url.searchParams.get('refresh_token')
+    
+    // Tokens might be in query params or hash fragment
+    let accessToken = url.searchParams.get('access_token') || url.searchParams.get('token')
+    let refreshToken = url.searchParams.get('refresh_token')
+    
+    // If not in query params, check hash fragment
+    if (!accessToken && url.hash) {
+      const hashParams = new URLSearchParams(url.hash.substring(1))
+      accessToken = hashParams.get('access_token') || hashParams.get('token')
+      refreshToken = hashParams.get('refresh_token')
+    }
+    
+    console.log("Token extraction:", { 
+      hasAccessToken: !!accessToken, 
+      hasRefreshToken: !!refreshToken,
+      queryParams: Array.from(url.searchParams.keys()),
+      hash: url.hash
+    })
     
     if (!accessToken || !refreshToken) {
       console.error("Failed to extract tokens from action link")
-      return NextResponse.json({ error: "Failed to create authentication session" }, { status: 500 })
+      return NextResponse.json({ 
+        error: "Failed to create authentication session: Could not extract tokens" 
+      }, { status: 500 })
     }
     
     // Check if user has completed onboarding
