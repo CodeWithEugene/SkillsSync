@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 import { createClient } from "@/lib/supabase/server"
 
-// In-memory store for OTPs (for demo; use a DB or cache in production)
-const otpStore = new Map<string, { code: string; expires: number }>()
-
 const EMAIL_USER = process.env.GMAIL_USER
 const EMAIL_PASS = process.env.GMAIL_APP_PASSWORD
 
@@ -53,22 +50,79 @@ async function sendMail({ to, subject, text, code }: { to: string; subject: stri
   }
 }
 
+// Helper functions to store/retrieve OTPs from Supabase database
+async function storeOtp(supabase: any, email: string, code: string): Promise<boolean> {
+  // Delete any existing OTP for this email first
+  await supabase.from("otp_tokens").delete().eq("email", email)
+  
+  // Calculate expiration time (5 minutes from now)
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString()
+  
+  const { error } = await supabase.from("otp_tokens").insert({
+    email,
+    code,
+    expires_at: expiresAt,
+  })
+  
+  if (error) {
+    console.error("Failed to store OTP:", error)
+    return false
+  }
+  return true
+}
+
+async function verifyOtp(supabase: any, email: string, code: string): Promise<{ valid: boolean; error?: string }> {
+  const { data, error } = await supabase
+    .from("otp_tokens")
+    .select("*")
+    .eq("email", email)
+    .single()
+  
+  if (error || !data) {
+    return { valid: false, error: "OTP not found. Please request a new one." }
+  }
+  
+  // Check if OTP has expired
+  if (new Date(data.expires_at) < new Date()) {
+    // Delete expired OTP
+    await supabase.from("otp_tokens").delete().eq("email", email)
+    return { valid: false, error: "OTP has expired. Please request a new one." }
+  }
+  
+  // Check if code matches
+  if (data.code !== code) {
+    return { valid: false, error: "Invalid OTP code." }
+  }
+  
+  // Delete the OTP after successful verification
+  await supabase.from("otp_tokens").delete().eq("email", email)
+  
+  return { valid: true }
+}
+
 export async function POST(request: NextRequest) {
   const { email, action, code } = await request.json()
   if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 })
 
+  const supabase = await createClient()
+
   if (action === "send") {
     // Only allow OTP for existing users in Supabase Auth
-    const supabase = await createClient()
     const { data: users, error } = await supabase.rpc('get_user_by_email', { user_email: email })
     if (error || !users || users.length === 0) {
       return NextResponse.json({ error: "No account found with this email. Please sign up first." }, { status: 404 })
     }
+    
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
-    otpStore.set(email, { code: otp, expires: Date.now() + 5 * 60 * 1000 }) // 5 min expiry
+    
+    // Store OTP in database
+    const stored = await storeOtp(supabase, email, otp)
+    if (!stored) {
+      return NextResponse.json({ error: "Failed to generate OTP. Please try again." }, { status: 500 })
+    }
 
-    // Send email (simulate or use a real service in production)
+    // Send email
     try {
       await sendMail({
         to: email,
@@ -83,30 +137,19 @@ export async function POST(request: NextRequest) {
   }
 
   if (action === "verify") {
-    const entry = otpStore.get(email)
-    if (!entry || entry.expires < Date.now()) {
-      return NextResponse.json({ error: "OTP expired or not found" }, { status: 400 })
+    // Verify OTP from database
+    const result = await verifyOtp(supabase, email, code)
+    if (!result.valid) {
+      return NextResponse.json({ error: result.error || "Token has expired or is invalid" }, { status: 401 })
     }
-    if (entry.code !== code) {
-      return NextResponse.json({ error: "Invalid OTP" }, { status: 400 })
-    }
+    
     // Check user exists in Supabase Auth
-    const supabase = await createClient()
     const { data: users, error } = await supabase.rpc('get_user_by_email', { user_email: email })
     if (error || !users || users.length === 0) {
       return NextResponse.json({ error: "No account found with this email. Please sign up first." }, { status: 404 })
     }
-    otpStore.delete(email)
-    // Use verifyOtp to create a session for the user
-    const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
-      email,
-      token: code,
-      type: "email"
-    })
-    if (verifyError) {
-      return NextResponse.json({ error: verifyError.message }, { status: 401 })
-    }
-    // Success: session cookie should be set by Supabase middleware
+    
+    // OTP verified successfully
     return NextResponse.json({ success: true, redirect: "/dashboard" })
   }
 
