@@ -10,8 +10,9 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Sparkles, Loader2 } from "lucide-react"
+import { Sparkles, Loader2, CheckCircle2, XCircle } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { validatePasswordStrength, getPasswordRequirements, getPasswordStrengthColor } from "@/lib/password-validation"
 
 export default function RegisterPage() {
   const [firstName, setFirstName] = useState("")
@@ -22,6 +23,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
 
   useEffect(() => {
     document.title = "Create Account | SkillSync"
@@ -38,8 +40,10 @@ export default function RegisterPage() {
       return
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters")
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(password)
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.errors.join(". "))
       setIsLoading(false)
       return
     }
@@ -205,16 +209,44 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    {password && (
+                      <span className={`text-xs font-medium ${getPasswordStrengthColor(validatePasswordStrength(password).strength)}`}>
+                        {validatePasswordStrength(password).strength.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
                   <Input
                     id="password"
                     type="password"
                     required
-                    minLength={6}
+                    minLength={8}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value)
+                      setShowPasswordRequirements(true)
+                    }}
+                    onFocus={() => setShowPasswordRequirements(true)}
                     className="transition-all focus:ring-2 focus:ring-primary"
                   />
+                  {showPasswordRequirements && password && (
+                    <div className="rounded-lg border bg-muted/30 p-3 space-y-1.5 text-xs">
+                      <p className="font-medium text-sm mb-2">Password Requirements:</p>
+                      {getPasswordRequirements(password).map((req, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          {req.met ? (
+                            <CheckCircle2 className="size-3.5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                          ) : (
+                            <XCircle className="size-3.5 text-muted-foreground flex-shrink-0" />
+                          )}
+                          <span className={req.met ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}>
+                            {req.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password">Confirm Password</Label>
@@ -226,6 +258,15 @@ export default function RegisterPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="transition-all focus:ring-2 focus:ring-primary"
                   />
+                  {confirmPassword && password !== confirmPassword && (
+                    <p className="text-xs text-destructive">Passwords do not match</p>
+                  )}
+                  {confirmPassword && password === confirmPassword && password.length > 0 && (
+                    <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <CheckCircle2 className="size-3" />
+                      Passwords match
+                    </p>
+                  )}
                 </div>
                 {error && (
                   <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3">

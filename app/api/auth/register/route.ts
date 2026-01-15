@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
+import { validatePasswordStrength } from "@/lib/password-validation"
 
 // Legacy compatibility endpoint - redirects to the signup page
 export async function POST(request: Request) {
@@ -8,6 +9,15 @@ export async function POST(request: Request) {
 
     if (!email || !password) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
+    }
+
+    // Validate password strength server-side
+    const passwordValidation = validatePasswordStrength(password)
+    if (!passwordValidation.isValid) {
+      return NextResponse.json(
+        { error: `Password validation failed: ${passwordValidation.errors.join(". ")}` },
+        { status: 400 }
+      )
     }
 
     const supabase = await createClient()
