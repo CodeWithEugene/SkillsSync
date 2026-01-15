@@ -68,21 +68,8 @@ export default function LoginPage() {
       const data = await res.json()
       if (!res.ok || !data.success) throw new Error(data.error || "Failed to verify OTP")
       
-      // Set the session using the tokens from the API
-      if (data.session) {
-        const supabase = createClient()
-        const { error: sessionError } = await supabase.auth.setSession({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token
-        })
-        
-        if (sessionError) {
-          console.error("Failed to set session:", sessionError)
-          throw new Error("Failed to establish session")
-        }
-      }
-      
-      // Redirect to the appropriate page
+      // Session is automatically created by Supabase's verifyOtp
+      // Just redirect to the appropriate page
       window.location.href = data.redirect || "/dashboard"
     } catch (err: any) {
       setOtpError(err.message)
