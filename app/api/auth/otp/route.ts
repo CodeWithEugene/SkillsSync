@@ -46,7 +46,12 @@ async function sendMail({ to, subject, text, code }: { to: string; subject: stri
     return true
   } catch (err) {
     console.error("Failed to send OTP email:", err)
-    throw new Error("Failed to send OTP email")
+    // Log more details for debugging
+    if (err instanceof Error) {
+      console.error("Error message:", err.message)
+      console.error("Error stack:", err.stack)
+    }
+    throw err // Throw the original error instead of a generic one
   }
 }
 
@@ -131,7 +136,9 @@ export async function POST(request: NextRequest) {
         code: otp,
       })
     } catch (e) {
-      return NextResponse.json({ error: "Failed to send OTP email" }, { status: 500 })
+      console.error("Email sending error:", e)
+      const errorMessage = e instanceof Error ? e.message : "Failed to send OTP email"
+      return NextResponse.json({ error: `Email error: ${errorMessage}` }, { status: 500 })
     }
     return NextResponse.json({ success: true })
   }
@@ -143,14 +150,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.error || "Token has expired or is invalid" }, { status: 401 })
     }
     
-    // Check user exists in Supabase Auth
+    // Check user exists in Supabase Auth and get user ID
     const { data: users, error } = await supabase.rpc('get_user_by_email', { user_email: email })
     if (error || !users || users.length === 0) {
       return NextResponse.json({ error: "No account found with this email. Please sign up first." }, { status: 404 })
     }
     
+    const userId = users[0].id
+    
+    // Check if user has completed onboarding
+    const { data: userGoal } = await supabase
+      .from("user_goals")
+      .select("onboarding_completed")
+      .eq("user_id", userId)
+      .single()
+    
+    // Determine redirect path based on onboarding status
+    const redirectPath = userGoal?.onboarding_completed ? "/dashboard" : "/onboarding"
+    
     // OTP verified successfully
-    return NextResponse.json({ success: true, redirect: "/dashboard" })
+    return NextResponse.json({ success: true, redirect: redirectPath })
   }
 
   return NextResponse.json({ error: "Invalid action" }, { status: 400 })

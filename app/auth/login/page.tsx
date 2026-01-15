@@ -67,8 +67,8 @@ export default function LoginPage() {
       })
       const data = await res.json()
       if (!res.ok || !data.success) throw new Error(data.error || "Failed to verify OTP")
-      // On success, redirect to dashboard
-      window.location.href = "/dashboard"
+      // On success, redirect to the appropriate page (dashboard or onboarding)
+      window.location.href = data.redirect || "/dashboard"
     } catch (err: any) {
       setOtpError(err.message)
     } finally {
@@ -83,13 +83,25 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       if (error) throw error
 
-      window.location.href = "/dashboard"
+      // Check if user has completed onboarding
+      if (authData.user) {
+        const { data: userGoal } = await supabase
+          .from("user_goals")
+          .select("onboarding_completed")
+          .eq("user_id", authData.user.id)
+          .single()
+
+        // Redirect based on onboarding status
+        window.location.href = userGoal?.onboarding_completed ? "/dashboard" : "/onboarding"
+      } else {
+        window.location.href = "/dashboard"
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
