@@ -38,16 +38,15 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
         {/* Sidebar Header */}
         <div className="flex items-center justify-between border-b p-4 h-16">
           <div className="flex items-center gap-2">
-            {!collapsed && (
+            {collapsed ? (
               <Image
-                src="/logo.png"
-                alt="SkillSync Logo"
-                width={160}
-                height={160}
+                src="/favicon.svg"
+                alt="SkillSync"
+                width={32}
+                height={32}
                 className="rounded-lg"
               />
-            )}
-            {collapsed && (
+            ) : (
               <Image
                 src="/logo.png"
                 alt="SkillSync Logo"
