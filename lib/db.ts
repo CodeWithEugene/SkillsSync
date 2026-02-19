@@ -449,3 +449,105 @@ export async function getPublicUserProfile(userId: string): Promise<PublicProfil
     guidance: guidanceRow ? mapCareerGuidanceFromDb(guidanceRow) : null,
   }
 }
+
+// ── Courses ───────────────────────────────────────────────────────────────────
+
+export type Course = {
+  id: string
+  userId: string
+  name: string
+  provider: string | null
+  url: string | null
+  status: "planned" | "enrolled" | "completed"
+  skillTags: string[]
+  notes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+function mapCourseFromDb(row: any): Course {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    name: row.name,
+    provider: row.provider,
+    url: row.url,
+    status: row.status,
+    skillTags: row.skill_tags ?? [],
+    notes: row.notes,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+export async function getCourses(userId: string): Promise<Course[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+
+  if (error) throw error
+  return (data ?? []).map(mapCourseFromDb)
+}
+
+export async function createCourse(
+  userId: string,
+  params: { name: string; provider?: string; url?: string; status?: Course["status"]; skillTags?: string[]; notes?: string },
+): Promise<Course> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("courses")
+    .insert({
+      user_id: userId,
+      name: params.name,
+      provider: params.provider ?? null,
+      url: params.url ?? null,
+      status: params.status ?? "planned",
+      skill_tags: params.skillTags ?? [],
+      notes: params.notes ?? null,
+    })
+    .select()
+    .single()
+
+  if (error) throw error
+  return mapCourseFromDb(data)
+}
+
+export async function updateCourse(
+  courseId: string,
+  userId: string,
+  updates: Partial<{ name: string; provider: string; url: string; status: Course["status"]; skillTags: string[]; notes: string }>,
+): Promise<Course> {
+  const supabase = await createClient()
+  const dbUpdates: any = {}
+  if (updates.name !== undefined) dbUpdates.name = updates.name
+  if (updates.provider !== undefined) dbUpdates.provider = updates.provider
+  if (updates.url !== undefined) dbUpdates.url = updates.url
+  if (updates.status !== undefined) dbUpdates.status = updates.status
+  if (updates.skillTags !== undefined) dbUpdates.skill_tags = updates.skillTags
+  if (updates.notes !== undefined) dbUpdates.notes = updates.notes
+
+  const { data, error } = await supabase
+    .from("courses")
+    .update(dbUpdates)
+    .eq("id", courseId)
+    .eq("user_id", userId)
+    .select()
+    .single()
+
+  if (error) throw error
+  return mapCourseFromDb(data)
+}
+
+export async function deleteCourse(courseId: string, userId: string): Promise<void> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("courses")
+    .delete()
+    .eq("id", courseId)
+    .eq("user_id", userId)
+
+  if (error) throw error
+}

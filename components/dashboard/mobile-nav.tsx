@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, LayoutDashboard, FileText, Lightbulb, User, Target } from "lucide-react"
+import { Menu, LayoutDashboard, FileText, Lightbulb, User, Target, Map, BarChart2, BookOpen, Briefcase } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -11,9 +11,13 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/roadmap", label: "Roadmap", icon: Map },
   { href: "/goals", label: "Goals", icon: Target },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/skills", label: "Skills", icon: Lightbulb },
+  { href: "/insights", label: "Insights", icon: BarChart2 },
+  { href: "/courses", label: "Courses", icon: BookOpen },
+  { href: "/compare", label: "Job Match", icon: Briefcase },
   { href: "/profile", label: "Profile", icon: User },
 ]
 
