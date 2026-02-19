@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Sparkles, Target, GraduationCap, BookOpen, TrendingUp } from "lucide-react"
+import { Sparkles, Target, GraduationCap, BookOpen, TrendingUp, ListChecks } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -21,10 +21,11 @@ export default function OnboardingPage() {
     educationLevel: "",
     currentStudy: "",
     studyYear: "",
+    courses: "",
     topPriority: "",
   })
 
-  const totalSteps = 5
+  const totalSteps = 6
   const progress = (step / totalSteps) * 100
 
   useEffect(() => {
@@ -181,11 +182,39 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* Step 5: Top Priority */}
+          {/* Step 5: Current Courses */}
           {step === 5 && (
             <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
               <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
-                <TrendingUp className="size-5 sm:size-6 text-primary flex-shrink-0" />
+                <ListChecks className="size-5 sm:size-6 text-primary shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-sm sm:text-base">Current Courses</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    List the courses you&apos;re currently taking
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="courses">What courses are you currently enrolled in?</Label>
+                <textarea
+                  id="courses"
+                  className="flex min-h-[120px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="e.g., Introduction to Machine Learning, Data Structures, Web Development, Business Communication..."
+                  value={formData.courses}
+                  onChange={(e) => setFormData({ ...formData, courses: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Separate courses with commas or new lines. This helps us generate better career guidance.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Top Priority */}
+          {step === 6 && (
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
+              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
+                <TrendingUp className="size-5 sm:size-6 text-primary shrink-0" />
                 <div>
                   <h3 className="font-semibold text-sm sm:text-base">Your Priority</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">What matters most to you right now?</p>

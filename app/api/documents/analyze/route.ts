@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { updateDocumentStatus, createExtractedSkill } from "@/lib/db"
+import { updateDocumentStatus, createExtractedSkill, addSkillHistorySnapshot, getExtractedSkills } from "@/lib/db"
 import { openai } from "@/lib/openai"
 import { NextResponse } from "next/server"
 
@@ -24,10 +24,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Document not found" }, { status: 404 })
     }
 
-    // Fetch file content
-    const response = await fetch(document.fileUrl)
-    const fileContent = await response.text()
-
     // Check if file is PDF and reject it
     if (document.filename.toLowerCase().endsWith(".pdf")) {
       await updateDocumentStatus(documentId, "FAILED")
@@ -37,19 +33,29 @@ export async function POST(request: Request) {
       })
     }
 
+    // Fetch file content
+    const response = await fetch(document.file_url)
+    const fileContent = await response.text()
+
     // Limit content size to avoid token limits
     const limitedContent = fileContent.substring(0, 15000)
 
-    // Call OpenAI for skill extraction
-    const prompt = `Analyze the following coursework/document and extract skills, technologies, and competencies demonstrated by the student. Return a JSON array of skills with the following structure:
+    // Call DeepSeek for skill extraction with technical/soft classification
+    const prompt = `Analyze the following coursework/document and extract skills, technologies, and competencies demonstrated. Return a JSON array with the following structure:
 [
   {
     "skillName": "skill name",
-    "category": "category (e.g., Programming, Design, Communication)",
+    "category": "specific category (e.g., Programming, Data Analysis, Communication, Leadership, Problem Solving)",
+    "skillType": "technical | soft | transferable",
     "confidenceScore": 0.0-1.0,
     "evidenceText": "brief quote or summary from the document"
   }
 ]
+
+Classification guide:
+- "technical": programming languages, tools, frameworks, domain-specific knowledge, hard skills
+- "soft": communication, teamwork, leadership, time management, emotional intelligence
+- "transferable": critical thinking, problem solving, research, project management, adaptability
 
 Document content:
 ${limitedContent}
@@ -62,7 +68,7 @@ Return only valid JSON array, no markdown formatting.`
         {
           role: "system",
           content:
-            "You are a skill extraction assistant. Extract skills from academic documents and return them as JSON.",
+            "You are a skill extraction assistant. Extract and classify skills from academic documents and return them as JSON.",
         },
         { role: "user", content: prompt },
       ],
@@ -80,19 +86,19 @@ Return only valid JSON array, no markdown formatting.`
     let skills: Array<{
       skillName: string
       category: string
+      skillType: "technical" | "soft" | "transferable"
       confidenceScore: number
       evidenceText: string
     }>
 
     try {
-      // Remove markdown code blocks if present
       const cleanedResponse = responseText
         .replace(/```json\n?/g, "")
         .replace(/```\n?/g, "")
         .trim()
       skills = JSON.parse(cleanedResponse)
     } catch (parseError) {
-      console.error("[v0] Failed to parse AI response:", parseError)
+      console.error("[skillsync] Failed to parse AI response:", parseError)
       await updateDocumentStatus(documentId, "FAILED")
       return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 })
     }
@@ -100,21 +106,45 @@ Return only valid JSON array, no markdown formatting.`
     // Store extracted skills in database
     for (const skill of skills) {
       await createExtractedSkill(
-        document.userId,
+        document.user_id,
         documentId,
         skill.skillName,
         skill.category,
         skill.confidenceScore,
         skill.evidenceText,
+        skill.skillType ?? "technical",
       )
     }
 
     // Update document status to COMPLETED
     await updateDocumentStatus(documentId, "COMPLETED")
 
+    // Record skill history snapshot for timeline
+    const allSkills = await getExtractedSkills(document.user_id)
+    const technical = allSkills.filter((s) => s.skillType === "technical").length
+    const soft = allSkills.filter((s) => s.skillType === "soft").length
+    const transferable = allSkills.filter((s) => s.skillType === "transferable").length
+
+    const categoryCount: Record<string, number> = {}
+    for (const s of allSkills) {
+      if (s.category) categoryCount[s.category] = (categoryCount[s.category] ?? 0) + 1
+    }
+    const topCategories = Object.entries(categoryCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([cat]) => cat)
+
+    await addSkillHistorySnapshot(document.user_id, documentId, {
+      technical,
+      soft,
+      transferable,
+      total: allSkills.length,
+      topCategories,
+    })
+
     return NextResponse.json({ status: "COMPLETED", skillsCount: skills.length })
   } catch (error) {
-    console.error("[v0] Error analyzing document:", error)
+    console.error("[skillsync] Error analyzing document:", error)
     return NextResponse.json({ error: "Failed to analyze document" }, { status: 500 })
   }
 }

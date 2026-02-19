@@ -15,6 +15,7 @@ export type ExtractedSkill = {
   documentId: string
   skillName: string
   category: string | null
+  skillType: "technical" | "soft" | "transferable"
   confidenceScore: number | null
   evidenceText: string | null
   createdAt: string
@@ -28,9 +29,40 @@ export type UserGoal = {
   studyDuration: string | null
   careerGoal: string | null
   skillGoal: string | null
+  educationLevel: string | null
+  studyYear: string | null
+  topPriority: string | null
+  courses: string | null
+  isPublic: boolean
   onboardingCompleted: boolean
   createdAt: string
   updatedAt: string
+}
+
+export type CareerGuidance = {
+  id: string
+  userId: string
+  careerGoal: string
+  readinessScore: number
+  summary: string
+  strengths: string[]
+  gaps: Array<{ skill: string; importance: string; suggestion: string }>
+  recommendations: string[]
+  createdAt: string
+}
+
+export type SkillHistory = {
+  id: string
+  userId: string
+  documentId: string | null
+  snapshot: {
+    technical: number
+    soft: number
+    transferable: number
+    total: number
+    topCategories: string[]
+  }
+  recordedAt: string
 }
 
 function mapDocumentFromDb(doc: any): Document {
@@ -51,6 +83,7 @@ function mapSkillFromDb(skill: any): ExtractedSkill {
     documentId: skill.document_id,
     skillName: skill.skill_name,
     category: skill.category,
+    skillType: skill.skill_type ?? "technical",
     confidenceScore: skill.confidence_score,
     evidenceText: skill.evidence_text,
     createdAt: skill.created_at,
@@ -66,9 +99,38 @@ function mapUserGoalFromDb(goal: any): UserGoal {
     studyDuration: goal.study_duration,
     careerGoal: goal.career_goal,
     skillGoal: goal.skill_goal,
+    educationLevel: goal.education_level,
+    studyYear: goal.study_year,
+    topPriority: goal.top_priority,
+    courses: goal.courses,
+    isPublic: goal.is_public ?? false,
     onboardingCompleted: goal.onboarding_completed,
     createdAt: goal.created_at,
     updatedAt: goal.updated_at,
+  }
+}
+
+function mapCareerGuidanceFromDb(row: any): CareerGuidance {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    careerGoal: row.career_goal,
+    readinessScore: row.readiness_score,
+    summary: row.summary,
+    strengths: row.strengths ?? [],
+    gaps: row.gaps ?? [],
+    recommendations: row.recommendations ?? [],
+    createdAt: row.created_at,
+  }
+}
+
+function mapSkillHistoryFromDb(row: any): SkillHistory {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    documentId: row.document_id,
+    snapshot: row.snapshot,
+    recordedAt: row.recorded_at,
   }
 }
 
@@ -118,6 +180,7 @@ export async function createExtractedSkill(
   category: string | null = null,
   confidenceScore: number | null = null,
   evidenceText: string | null = null,
+  skillType: "technical" | "soft" | "transferable" = "technical",
 ): Promise<ExtractedSkill> {
   const supabase = await createClient()
   const { data, error } = await supabase
@@ -129,6 +192,7 @@ export async function createExtractedSkill(
       category,
       confidence_score: confidenceScore,
       evidence_text: evidenceText,
+      skill_type: skillType,
     })
     .select()
     .single()
@@ -180,6 +244,10 @@ export async function createUserGoal(
     studyDuration?: string
     careerGoal?: string
     skillGoal?: string
+    educationLevel?: string
+    studyYear?: string
+    topPriority?: string
+    courses?: string
   },
 ): Promise<UserGoal> {
   const supabase = await createClient()
@@ -192,6 +260,10 @@ export async function createUserGoal(
       study_duration: goalData.studyDuration,
       career_goal: goalData.careerGoal,
       skill_goal: goalData.skillGoal,
+      education_level: goalData.educationLevel,
+      study_year: goalData.studyYear,
+      top_priority: goalData.topPriority,
+      courses: goalData.courses,
       onboarding_completed: true,
     })
     .select()
@@ -209,6 +281,10 @@ export async function updateUserGoal(
     studyDuration?: string
     careerGoal?: string
     skillGoal?: string
+    educationLevel?: string
+    studyYear?: string
+    topPriority?: string
+    courses?: string
   },
 ): Promise<UserGoal> {
   const supabase = await createClient()
@@ -220,6 +296,10 @@ export async function updateUserGoal(
       study_duration: goalData.studyDuration,
       career_goal: goalData.careerGoal,
       skill_goal: goalData.skillGoal,
+      education_level: goalData.educationLevel,
+      study_year: goalData.studyYear,
+      top_priority: goalData.topPriority,
+      courses: goalData.courses,
     })
     .eq("user_id", userId)
     .select()
@@ -227,4 +307,145 @@ export async function updateUserGoal(
 
   if (error) throw error
   return mapUserGoalFromDb(data)
+}
+
+// ── Career Guidance ───────────────────────────────────────────────────────────
+
+export async function getCareerGuidance(userId: string): Promise<CareerGuidance | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("career_guidance")
+    .select("*")
+    .eq("user_id", userId)
+    .single()
+
+  if (error) {
+    if (error.code === "PGRST116") return null
+    throw error
+  }
+  return data ? mapCareerGuidanceFromDb(data) : null
+}
+
+export async function upsertCareerGuidance(
+  userId: string,
+  guidance: {
+    careerGoal: string
+    readinessScore: number
+    summary: string
+    strengths: string[]
+    gaps: Array<{ skill: string; importance: string; suggestion: string }>
+    recommendations: string[]
+  },
+): Promise<CareerGuidance> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("career_guidance")
+    .upsert(
+      {
+        user_id: userId,
+        career_goal: guidance.careerGoal,
+        readiness_score: guidance.readinessScore,
+        summary: guidance.summary,
+        strengths: guidance.strengths,
+        gaps: guidance.gaps,
+        recommendations: guidance.recommendations,
+      },
+      { onConflict: "user_id" },
+    )
+    .select()
+    .single()
+
+  if (error) throw error
+  return mapCareerGuidanceFromDb(data)
+}
+
+// ── Skill History ─────────────────────────────────────────────────────────────
+
+export async function addSkillHistorySnapshot(
+  userId: string,
+  documentId: string,
+  snapshot: SkillHistory["snapshot"],
+): Promise<SkillHistory> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("skill_history")
+    .insert({ user_id: userId, document_id: documentId, snapshot })
+    .select()
+    .single()
+
+  if (error) throw error
+  return mapSkillHistoryFromDb(data)
+}
+
+export async function getSkillHistory(userId: string): Promise<SkillHistory[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("skill_history")
+    .select("*")
+    .eq("user_id", userId)
+    .order("recorded_at", { ascending: true })
+
+  if (error) throw error
+  return (data ?? []).map(mapSkillHistoryFromDb)
+}
+
+// ── Public Profile ────────────────────────────────────────────────────────────
+
+export async function toggleProfilePublic(userId: string, isPublic: boolean): Promise<void> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("user_goals")
+    .update({ is_public: isPublic })
+    .eq("user_id", userId)
+  if (error) throw error
+}
+
+export type PublicProfile = {
+  userId: string
+  careerGoal: string | null
+  skillGoal: string | null
+  currentStudy: string | null
+  skills: Array<{ skillName: string; category: string | null; skillType: string }>
+  guidance: CareerGuidance | null
+}
+
+export async function getPublicUserProfile(userId: string): Promise<PublicProfile | null> {
+  // Uses admin client so RLS does not block public reads.
+  // We only expose data when is_public = true.
+  const { createAdminClient } = await import("@/lib/supabase/admin")
+  const admin = createAdminClient()
+
+  const { data: goal, error: goalError } = await admin
+    .from("user_goals")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("is_public", true)
+    .maybeSingle()
+
+  if (goalError || !goal) return null
+
+  const { data: skillRows } = await admin
+    .from("extracted_skills")
+    .select("skill_name, category, skill_type")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+
+  const { data: guidanceRow } = await admin
+    .from("career_guidance")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle()
+
+  return {
+    userId,
+    careerGoal: goal.career_goal,
+    skillGoal: goal.skill_goal,
+    currentStudy: goal.current_study,
+    skills: (skillRows ?? []).map((s: any) => ({
+      skillName: s.skill_name,
+      category: s.category,
+      skillType: s.skill_type ?? "technical",
+    })),
+    guidance: guidanceRow ? mapCareerGuidanceFromDb(guidanceRow) : null,
+  }
 }

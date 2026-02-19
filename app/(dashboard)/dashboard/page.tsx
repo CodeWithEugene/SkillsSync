@@ -1,6 +1,8 @@
 import { requireAuth } from "@/lib/supabase-auth"
-import { getDocuments, getExtractedSkills, getUserGoal } from "@/lib/db"
+import { getDocuments, getExtractedSkills, getUserGoal, getCareerGuidance, getSkillHistory } from "@/lib/db"
 import { DocumentList } from "@/components/documents/document-list"
+import { CareerGuidanceWidget } from "@/components/dashboard/career-guidance-widget"
+import { SkillTimeline } from "@/components/dashboard/skill-timeline"
 import { FileText, Lightbulb, CheckCircle, Clock } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { redirect } from "next/navigation"
@@ -18,11 +20,16 @@ export default async function DashboardPage() {
     redirect("/onboarding")
   }
 
-  const documents = await getDocuments(user.id)
-  const skills = await getExtractedSkills(user.id)
+  const [documents, skills, guidance, skillHistory] = await Promise.all([
+    getDocuments(user.id),
+    getExtractedSkills(user.id),
+    getCareerGuidance(user.id),
+    getSkillHistory(user.id),
+  ])
 
   const completedDocs = documents.filter((doc) => doc.status === "COMPLETED").length
   const processingDocs = documents.filter((doc) => doc.status === "PROCESSING").length
+  const userHasSkills = skills.length > 0
 
   const firstName = user.user_metadata?.first_name || user.email?.split("@")[0] || "there"
 
@@ -97,6 +104,16 @@ export default async function DashboardPage() {
             </p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Career Readiness + Timeline side by side on large screens */}
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+        <CareerGuidanceWidget
+          initialGuidance={guidance}
+          userHasSkills={userHasSkills}
+          careerGoal={userGoal.careerGoal}
+        />
+        <SkillTimeline initialHistory={skillHistory} />
       </div>
 
       <Card className="bento-card max-h-60 sm:max-h-80 flex flex-col overflow-hidden">

@@ -1,8 +1,10 @@
 import { requireAuth } from "@/lib/supabase-auth"
+import { getUserGoal } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { User, Mail, Calendar, CheckCircle } from "lucide-react"
+import { ShareProfileToggle } from "@/components/profile/share-profile-toggle"
+import { User, Mail, Calendar, CheckCircle, Share2 } from "lucide-react"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -11,6 +13,7 @@ export const metadata: Metadata = {
 
 export default async function ProfilePage() {
   const user = await requireAuth()
+  const userGoal = await getUserGoal(user.id)
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -87,6 +90,29 @@ export default async function ProfilePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Shareable profile */}
+      <Card className="bento-card">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl bg-primary/10 p-2.5 sm:p-3">
+              <Share2 className="size-5 sm:size-6 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-base sm:text-lg">Share Your Profile</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Share your skills and career readiness with recruiters or peers
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ShareProfileToggle
+            userId={user.id}
+            initialIsPublic={userGoal?.isPublic ?? false}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
