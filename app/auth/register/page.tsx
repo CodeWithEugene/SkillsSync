@@ -234,9 +234,9 @@ export default function RegisterPage() {
                       {getPasswordRequirements(password).map((req, index) => (
                         <div key={index} className="flex items-center gap-2">
                           {req.met ? (
-                            <CheckCircle2 className="size-3.5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                            <CheckCircle2 className="size-3.5 text-green-600 dark:text-green-400 shrink-0" />
                           ) : (
-                            <XCircle className="size-3.5 text-muted-foreground flex-shrink-0" />
+                            <XCircle className="size-3.5 text-muted-foreground shrink-0" />
                           )}
                           <span className={req.met ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}>
                             {req.text}

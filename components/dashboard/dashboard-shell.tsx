@@ -69,8 +69,11 @@ export function DashboardShell({ children, user, firstName }: DashboardShellProp
             return (
               <Link key={item.href} href={item.href}>
                 <div
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all hover:bg-sidebar-accent group ${isActive ? "bg-primary text-primary-foreground" : ""
-                    } ${collapsed ? "justify-center" : ""}`}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all group ${
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-sidebar-accent"
+                  } ${collapsed ? "justify-center" : ""}`}
                 >
                   <Icon className={`size-5 ${isActive ? "" : "group-hover:text-primary"}`} />
                   {!collapsed && <span className="font-medium">{item.label}</span>}
