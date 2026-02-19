@@ -5,7 +5,7 @@ import {
   upsertCareerGuidance,
   getCareerGuidance,
 } from "@/lib/db"
-import { openai } from "@/lib/openai"
+import { generateText } from "@/lib/openai"
 import { NextResponse } from "next/server"
 
 export async function GET() {
@@ -85,19 +85,10 @@ Respond with a JSON object in this exact structure:
 
 Be specific, honest, and encouraging. Gaps and recommendations should be concrete and actionable. Return only valid JSON.`
 
-    const completion = await openai.chat.completions.create({
-      model: "deepseek-chat",
-      messages: [
-        {
-          role: "system",
-          content: "You are a career intelligence advisor. Provide precise, actionable career guidance as JSON.",
-        },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.4,
-    })
-
-    const responseText = completion.choices[0]?.message?.content
+    const responseText = await generateText(
+      prompt,
+      "You are a career intelligence advisor. Provide precise, actionable career guidance as JSON."
+    )
     if (!responseText) {
       return NextResponse.json({ error: "No response from AI" }, { status: 500 })
     }

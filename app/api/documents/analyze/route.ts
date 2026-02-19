@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { updateDocumentStatus, createExtractedSkill, addSkillHistorySnapshot, getExtractedSkills } from "@/lib/db"
-import { openai } from "@/lib/openai"
+import { generateText } from "@/lib/openai"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
@@ -62,20 +62,10 @@ ${limitedContent}
 
 Return only valid JSON array, no markdown formatting.`
 
-    const completion = await openai.chat.completions.create({
-      model: "deepseek-chat",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a skill extraction assistant. Extract and classify skills from academic documents and return them as JSON.",
-        },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.3,
-    })
-
-    const responseText = completion.choices[0]?.message?.content
+    const responseText = await generateText(
+      prompt,
+      "You are a skill extraction assistant. Extract and classify skills from academic documents and return them as JSON."
+    )
 
     if (!responseText) {
       await updateDocumentStatus(documentId, "FAILED")
@@ -92,11 +82,7 @@ Return only valid JSON array, no markdown formatting.`
     }>
 
     try {
-      const cleanedResponse = responseText
-        .replace(/```json\n?/g, "")
-        .replace(/```\n?/g, "")
-        .trim()
-      skills = JSON.parse(cleanedResponse)
+      skills = JSON.parse(responseText)
     } catch (parseError) {
       console.error("[skillsync] Failed to parse AI response:", parseError)
       await updateDocumentStatus(documentId, "FAILED")

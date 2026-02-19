@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getCurrentUser } from "@/lib/supabase-auth"
 import { getExtractedSkills } from "@/lib/db"
-import { openai } from "@/lib/openai"
+import { generateText } from "@/lib/openai"
 
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser()
@@ -40,14 +40,7 @@ Analyse the match and respond with a JSON object exactly like this (no markdown,
 }`
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "deepseek-chat",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.3,
-      response_format: { type: "json_object" },
-    })
-
-    const raw = completion.choices[0]?.message?.content ?? "{}"
+    const raw = await generateText(prompt)
     const result = JSON.parse(raw)
 
     return NextResponse.json({
