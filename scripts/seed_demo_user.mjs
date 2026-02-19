@@ -37,9 +37,9 @@ const supabase = createClient(
 )
 
 // ─── Demo credentials ─────────────────────────────────────────────────────────
-const DEMO_EMAIL    = "demo@skillsync.app"
+const DEMO_EMAIL    = "eugene@skillssync.xyz"
 const DEMO_PASSWORD = "SkillSync@Demo2026"
-const DEMO_NAME     = "Alex Rivera"
+const DEMO_NAME     = "Eugene Mutembei"
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function abort(msg, err) {
