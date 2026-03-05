@@ -172,6 +172,14 @@
    );
    ```
 
+   **Optional – Skills on Base (wallet + on-chain attestations):** Run migrations `scripts/007_wallet_address.sql` and `scripts/008_onchain_attestations.sql` either by:
+
+   - **Option A:** Adding your Supabase Postgres connection string to `.env` as `DATABASE_URL` (Dashboard → Project Settings → Database → Connection string URI), then running:
+     ```bash
+     pnpm run db:migrate
+     ```
+   - **Option B:** Opening the Supabase SQL Editor and running the contents of each file in order.
+
 5. **Run the development server**
 
    ```bash

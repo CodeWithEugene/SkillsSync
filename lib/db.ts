@@ -35,6 +35,7 @@ export type UserGoal = {
   courses: string | null
   isPublic: boolean
   onboardingCompleted: boolean
+  walletAddress: string | null
   createdAt: string
   updatedAt: string
 }
@@ -105,6 +106,7 @@ function mapUserGoalFromDb(goal: any): UserGoal {
     courses: goal.courses,
     isPublic: goal.is_public ?? false,
     onboardingCompleted: goal.onboarding_completed,
+    walletAddress: goal.wallet_address ?? null,
     createdAt: goal.created_at,
     updatedAt: goal.updated_at,
   }
@@ -285,22 +287,25 @@ export async function updateUserGoal(
     studyYear?: string
     topPriority?: string
     courses?: string
+    walletAddress?: string | null
   },
 ): Promise<UserGoal> {
   const supabase = await createClient()
+  const updatePayload: Record<string, unknown> = {}
+  if (goalData.currentStudy !== undefined) updatePayload.current_study = goalData.currentStudy
+  if (goalData.wantToStudy !== undefined) updatePayload.want_to_study = goalData.wantToStudy
+  if (goalData.studyDuration !== undefined) updatePayload.study_duration = goalData.studyDuration
+  if (goalData.careerGoal !== undefined) updatePayload.career_goal = goalData.careerGoal
+  if (goalData.skillGoal !== undefined) updatePayload.skill_goal = goalData.skillGoal
+  if (goalData.educationLevel !== undefined) updatePayload.education_level = goalData.educationLevel
+  if (goalData.studyYear !== undefined) updatePayload.study_year = goalData.studyYear
+  if (goalData.topPriority !== undefined) updatePayload.top_priority = goalData.topPriority
+  if (goalData.courses !== undefined) updatePayload.courses = goalData.courses
+  if (goalData.walletAddress !== undefined) updatePayload.wallet_address = goalData.walletAddress
+
   const { data, error } = await supabase
     .from("user_goals")
-    .update({
-      current_study: goalData.currentStudy,
-      want_to_study: goalData.wantToStudy,
-      study_duration: goalData.studyDuration,
-      career_goal: goalData.careerGoal,
-      skill_goal: goalData.skillGoal,
-      education_level: goalData.educationLevel,
-      study_year: goalData.studyYear,
-      top_priority: goalData.topPriority,
-      courses: goalData.courses,
-    })
+    .update(updatePayload)
     .eq("user_id", userId)
     .select()
     .single()
@@ -387,6 +392,63 @@ export async function getSkillHistory(userId: string): Promise<SkillHistory[]> {
 
   if (error) throw error
   return (data ?? []).map(mapSkillHistoryFromDb)
+}
+
+// ── Onchain Attestations ──────────────────────────────────────────────────────
+
+export type OnchainAttestation = {
+  id: string
+  userId: string
+  txHash: string
+  profileHash: string
+  chainId: number
+  createdAt: string
+}
+
+function mapOnchainAttestationFromDb(row: any): OnchainAttestation {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    txHash: row.tx_hash,
+    profileHash: row.profile_hash,
+    chainId: row.chain_id,
+    createdAt: row.created_at,
+  }
+}
+
+export async function upsertOnchainAttestation(
+  userId: string,
+  data: { txHash: string; profileHash: string; chainId: number }
+): Promise<OnchainAttestation> {
+  const supabase = await createClient()
+  const { data: row, error } = await supabase
+    .from("onchain_attestations")
+    .upsert(
+      {
+        user_id: userId,
+        tx_hash: data.txHash,
+        profile_hash: data.profileHash,
+        chain_id: data.chainId,
+      },
+      { onConflict: "user_id" }
+    )
+    .select()
+    .single()
+
+  if (error) throw error
+  return mapOnchainAttestationFromDb(row)
+}
+
+export async function getOnchainAttestation(userId: string): Promise<OnchainAttestation | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("onchain_attestations")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle()
+
+  if (error) throw error
+  return data ? mapOnchainAttestationFromDb(data) : null
 }
 
 // ── Public Profile ────────────────────────────────────────────────────────────

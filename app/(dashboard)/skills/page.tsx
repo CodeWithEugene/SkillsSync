@@ -1,6 +1,7 @@
 "use client"
 
 import { SkillsGrid } from "@/components/skills/skills-grid"
+import { RecordOnBase } from "@/components/skills/record-on-base"
 import type { ExtractedSkill } from "@/lib/db"
 import { useEffect, useState } from "react"
 
@@ -38,6 +39,8 @@ export default function SkillsPage() {
           View all skills automatically extracted from your documents
         </p>
       </div>
+
+      <RecordOnBase skills={skills} />
 
       {isLoading ? <p className="text-muted-foreground">Loading skills...</p> : <SkillsGrid skills={skills} />}
     </div>
