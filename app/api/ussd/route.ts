@@ -16,6 +16,11 @@ function getTextFromGet(request: NextRequest): string {
   return (q.get("text") ?? q.get("Text") ?? "").trim()
 }
 
+/** GET with ?ping=1 returns a simple OK so you can verify the deployed endpoint. */
+function isPing(request: NextRequest): boolean {
+  return request.nextUrl.searchParams.get("ping") === "1"
+}
+
 function buildUssdResponse(menu: string): string {
   if (!menu) {
     return `CON Welcome to SkillSync
@@ -54,6 +59,9 @@ Transform your coursework into verifiable skills.
 
 export async function GET(request: NextRequest) {
   try {
+    if (isPing(request)) {
+      return new NextResponse("OK SkillSync USSD", { status: 200, headers: TEXT_PLAIN })
+    }
     const text = getTextFromGet(request)
     const response = buildUssdResponse(text)
     return new NextResponse(response, { status: 200, headers: TEXT_PLAIN })
