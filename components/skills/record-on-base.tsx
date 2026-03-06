@@ -1,14 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from "wagmi"
+import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, useWriteContract } from "wagmi"
 import { injected } from "wagmi/connectors"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { computeSkillsProfileHash } from "@/lib/skills-hash"
 import { SKILLS_REGISTRY_ABI, getBaseChainId } from "@/lib/base-contract"
 import type { ExtractedSkill } from "@/lib/db"
-import { ExternalLink, Loader2, Wallet, ShieldCheck } from "lucide-react"
+import { ExternalLink, Loader2, Wallet, ShieldCheck, CheckCircle2 } from "lucide-react"
 import { getWalletLinkMessage } from "@/lib/wallet-nonce"
 
 const REGISTRY_ADDRESS = process.env.NEXT_PUBLIC_SKILLS_REGISTRY_ADDRESS as `0x${string}` | undefined
@@ -23,13 +24,15 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
     txUrl: string
     txHash: string
   } | null>(null)
+  const [verifiedOnChain, setVerifiedOnChain] = useState<boolean | null>(null)
   const [linkLoading, setLinkLoading] = useState(false)
   const [linkError, setLinkError] = useState<string | null>(null)
 
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, chain } = useAccount()
   const { connect, isPending: isConnectPending } = useConnect()
   const { disconnect } = useDisconnect()
   const { signMessageAsync } = useSignMessage()
+  const { switchChainAsync, isPending: isSwitchPending } = useSwitchChain()
   const { writeContractAsync, isPending: isWritePending } = useWriteContract()
 
   useEffect(() => {
@@ -69,6 +72,27 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
     fetchOnchain()
   }, [])
 
+  useEffect(() => {
+    if (!linkedAddress) {
+      setVerifiedOnChain(null)
+      return
+    }
+    const fetchVerified = async () => {
+      try {
+        const res = await fetch("/api/skills/onchain-status")
+        if (res.ok) {
+          const data = await res.json()
+          setVerifiedOnChain(data.recorded === true)
+        } else {
+          setVerifiedOnChain(false)
+        }
+      } catch {
+        setVerifiedOnChain(false)
+      }
+    }
+    fetchVerified()
+  }, [linkedAddress])
+
   const handleConnect = () => {
     connect({ connector: injected() })
   }
@@ -105,6 +129,9 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
     const profileHash = computeSkillsProfileHash(skills)
     const chainId = getBaseChainId()
     try {
+      if (chain?.id !== chainId && switchChainAsync) {
+        await switchChainAsync({ chainId })
+      }
       const hash = await writeContractAsync({
         address: REGISTRY_ADDRESS,
         abi: SKILLS_REGISTRY_ABI,
@@ -124,6 +151,12 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
         const baseUrl =
           chainId === 8453 ? "https://basescan.org" : "https://sepolia.basescan.org"
         setOnchainAttestation({ txUrl: `${baseUrl}/tx/${hash}`, txHash: hash })
+        setTimeout(() => {
+          fetch("/api/skills/onchain-status")
+            .then((r) => r.ok && r.json())
+            .then((data) => data?.recorded === true && setVerifiedOnChain(true))
+            .catch(() => {})
+        }, 4000)
       }
     } catch (e) {
       console.error("Record on Base failed:", e)
@@ -132,7 +165,7 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
 
   const isLinked = linkedAddress && address && linkedAddress === address.toLowerCase()
   const canRecord = REGISTRY_ADDRESS && skills.length > 0 && isLinked
-  const pending = isConnectPending || linkLoading || isWritePending
+  const pending = isConnectPending || linkLoading || isSwitchPending || isWritePending
 
   return (
     <Card>
@@ -205,17 +238,25 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
           </div>
         )}
 
-        {onchainAttestation && (
-          <p className="mt-4 text-sm">
-            <a
-              href={onchainAttestation.txUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-primary hover:underline"
-            >
-              Recorded on Base <ExternalLink className="size-3" />
-            </a>
-          </p>
+        {(onchainAttestation || verifiedOnChain) && (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {onchainAttestation && (
+              <a
+                href={onchainAttestation.txUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+              >
+                Recorded on Base <ExternalLink className="size-3" />
+              </a>
+            )}
+            {verifiedOnChain && (
+              <Badge variant="secondary" className="gap-1 font-normal text-success border-success/30 bg-success/10">
+                <CheckCircle2 className="size-3.5" />
+                Verified on-chain
+              </Badge>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>
