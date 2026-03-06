@@ -28,8 +28,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Document not found" }, { status: 404 })
     }
 
+    const filename = (document.filename ?? (document as { file_name?: string }).file_name ?? "").trim()
+    if (!filename) {
+      await updateDocumentStatus(documentId, "FAILED")
+      return NextResponse.json({ error: "Document has no filename", status: "FAILED" }, { status: 400 })
+    }
+
     // Check if file is PDF and reject it
-    if (document.filename.toLowerCase().endsWith(".pdf")) {
+    if (filename.toLowerCase().endsWith(".pdf")) {
       await updateDocumentStatus(documentId, "FAILED")
       return NextResponse.json({
         error: "PDF files are not supported. Please upload a text file.",
@@ -38,8 +44,7 @@ export async function POST(request: Request) {
     }
 
     // Option A: Predefined insights for software-engineering.docx
-    const isSoftwareEngineering =
-      document.filename.toLowerCase() === SOFTWARE_ENGINEERING_FILENAME.toLowerCase()
+    const isSoftwareEngineering = filename.toLowerCase() === SOFTWARE_ENGINEERING_FILENAME.toLowerCase()
     if (isSoftwareEngineering) {
       for (const skill of SOFTWARE_ENGINEERING_INSIGHTS) {
         await createExtractedSkill(

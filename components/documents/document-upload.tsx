@@ -39,6 +39,17 @@ export function DocumentUpload({ onUploadComplete, onPaymentRequired }: Document
           throw new Error(data.error || "Upload failed")
         }
 
+        const document = (await response.json()) as { id: string }
+        const analyzeRes = await fetch("/api/documents/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ documentId: document.id }),
+        })
+        if (!analyzeRes.ok) {
+          const err = await analyzeRes.json().catch(() => ({}))
+          throw new Error((err as { error?: string }).error || "Analysis failed")
+        }
+
         onUploadComplete?.()
       } catch (err) {
         setError(err instanceof Error ? err.message : "Upload failed")

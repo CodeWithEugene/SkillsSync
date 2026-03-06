@@ -47,14 +47,7 @@ export async function POST(request: Request) {
     // Create document record in database
     const document = await createDocument(user.id, file.name, publicUrl)
 
-    // Trigger background analysis
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-    fetch(`${appUrl}/api/documents/analyze`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ documentId: document.id }),
-    }).catch((err) => console.error("[v0] Failed to trigger analysis:", err))
-
+    // Analysis is triggered by the client after upload (so the request has auth cookies and RLS allows reading the document)
     return NextResponse.json(document)
   } catch (error) {
     console.error("[v0] Error uploading document:", error)
