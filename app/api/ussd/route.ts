@@ -4,10 +4,18 @@ const SITE_URL = "https://www.skillssync.xyz"
 
 /**
  * Africa's Talking USSD callback handler.
+ * Use callback URL: https://www.skillssync.xyz/api/ussd (with www to avoid redirect).
  * Receives POST with: sessionId, serviceCode, phoneNumber, text (menu path e.g. "" or "1" or "1*2").
  * Response must be plain text starting with CON (continue) or END (end session).
  * @see https://developers.africastalking.com/docs/ussd/overview
  */
+export async function GET() {
+  return new NextResponse("USSD callback expects POST from Africa's Talking.", {
+    status: 405,
+    headers: { "Content-Type": "text/plain" },
+  })
+}
+
 export async function POST(request: NextRequest) {
   try {
     const contentType = request.headers.get("content-type") ?? ""
