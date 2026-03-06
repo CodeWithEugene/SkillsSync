@@ -93,6 +93,11 @@ export default function LoginPage() {
 
       // Check if user has completed onboarding
       if (authData.user) {
+        await fetch("/api/email/auth-notification", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "login" }),
+        }).catch(() => {})
         const { data: userGoal } = await supabase
           .from("user_goals")
           .select("onboarding_completed")

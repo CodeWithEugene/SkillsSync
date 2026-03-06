@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { sendAuthNotification } from "@/lib/email"
 
 const EMAIL_USER = process.env.GMAIL_USER
 const EMAIL_PASS = process.env.GMAIL_APP_PASSWORD
@@ -59,9 +60,15 @@ export async function POST(request: NextRequest) {
     // Determine redirect path based on onboarding status
     const redirectPath = userGoal?.onboarding_completed ? "/dashboard" : "/onboarding"
 
+    // Send sign-in notification email (fire-and-forget)
+    const email = authData.user.email
+    if (email) {
+      sendAuthNotification(email, "login").catch((err) => console.error("Auth notification email failed:", err))
+    }
+
     // OTP verified successfully - session is automatically created by Supabase
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       redirect: redirectPath
     })
   }

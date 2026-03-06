@@ -67,6 +67,11 @@ export default function RegisterPage() {
 
       // Redirect directly to onboarding
       if (signUpData.user) {
+        await fetch("/api/email/auth-notification", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "signup" }),
+        }).catch(() => {})
         window.location.href = "/onboarding"
       }
     } catch (error: unknown) {
