@@ -550,6 +550,16 @@ export async function markUploadPaymentCompletedByTransactionId(
   if (error) throw error
 }
 
+export async function markUploadPaymentCompletedByReference(reference: string): Promise<void> {
+  const { createAdminClient } = await import("@/lib/supabase/admin")
+  const admin = createAdminClient()
+  const { error } = await admin
+    .from("upload_payments")
+    .update({ status: "completed" })
+    .eq("reference", reference)
+  if (error) throw error
+}
+
 export async function hasUnconsumedUploadCredit(userId: string): Promise<boolean> {
   const supabase = await createClient()
   const { data, error } = await supabase

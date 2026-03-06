@@ -19,6 +19,18 @@ export default function DocumentsPage() {
     document.title = "Documents | SkillSync"
   }, [])
 
+  // After successful payment redirect: show document upload
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("payment") === "success") {
+      setHasCredit(true)
+      setShowPaymentModal(false)
+      setShowUpload(true)
+      window.history.replaceState({}, "", "/documents")
+    }
+  }, [])
+
   const fetchDocuments = async () => {
     try {
       const response = await fetch("/api/documents")
@@ -72,7 +84,7 @@ export default function DocumentsPage() {
       <div>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Documents</h1>
         <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
-          Upload and manage your documents for skill extraction (KES 20 per upload)
+          Upload and manage your documents for skill extraction (payment required per upload)
         </p>
       </div>
 

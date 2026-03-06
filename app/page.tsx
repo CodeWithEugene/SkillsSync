@@ -43,8 +43,8 @@ export default async function HomePage() {
             {/* Hero Section - Compact */}
             <div className="text-center mb-8 lg:mb-12">
               <h1 className="mb-3 lg:mb-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                Transform Your Documents Into
-                <span className="text-primary"> Valuable Skills</span>
+                Transform Your Coursework Into
+                <span className="text-primary"> Valuable & Verifiable Skills</span>
               </h1>
               <p className="mx-auto mb-4 lg:mb-6 max-w-2xl text-base lg:text-lg text-muted-foreground">
                 SkillSync uses AI to automatically extract and track skills from your coursework, projects, and

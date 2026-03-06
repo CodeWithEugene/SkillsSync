@@ -172,7 +172,7 @@
    );
    ```
 
-   **Optional – Pay-per-upload (Lipana M-Pesa):** Add `LIPANA_SECRET_KEY`, `LIPANA_WEBHOOK_SECRET`, and optionally `LIPANA_ENVIRONMENT=sandbox` to `.env`, run migration `scripts/009_upload_payments.sql` (via `pnpm run db:migrate` or Supabase SQL Editor), then set the webhook URL either by running `pnpm run lipana:webhook` (uses the SDK to set `https://skillssync.xyz/api/payments/webhook`) or manually in the Lipana dashboard.
+   **Optional – Pay-per-upload (Paystack):** Add `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY` (live keys from [Paystack Dashboard](https://dashboard.paystack.com)) to `.env`, run migration `scripts/009_upload_payments.sql` (via `pnpm run db:migrate` or Supabase SQL Editor). Set your Paystack webhook URL to `https://your-domain.com/api/payments/webhook` for `charge.success` events.
 
    **Optional – Skills on Base (wallet + on-chain attestations):** Run migrations `scripts/007_wallet_address.sql` and `scripts/008_onchain_attestations.sql` either by:
 

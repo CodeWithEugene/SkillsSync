@@ -1,33 +1,26 @@
-import { getLipanaClient, getWebhookSecret } from "@/lib/lipana"
-import { markUploadPaymentCompletedByTransactionId } from "@/lib/db"
+import { markUploadPaymentCompletedByReference } from "@/lib/db"
+import { paystackVerifyWebhookSignature } from "@/lib/paystack"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
   try {
     const rawBody = await request.text()
-    const signature = request.headers.get("x-lipana-signature") ?? ""
-    const secret = getWebhookSecret()
-    const lipana = getLipanaClient()
+    const signature = request.headers.get("x-paystack-signature") ?? ""
 
-    const isValid = lipana.webhooks.verify(rawBody, signature, secret)
-    if (!isValid) {
+    if (!paystackVerifyWebhookSignature(rawBody, signature)) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
     }
 
-    const payload = JSON.parse(rawBody) as {
-      event?: string
-      data?: { transactionId?: string; transaction_id?: string }
-    }
-    if (payload.event !== "payment.success") {
+    const payload = JSON.parse(rawBody) as { event?: string; data?: { reference?: string } }
+    if (payload.event !== "charge.success") {
       return NextResponse.json({ received: true })
     }
-    const transactionId =
-      payload.data?.transactionId ?? payload.data?.transaction_id
-    if (!transactionId) {
+    const reference = payload.data?.reference
+    if (!reference) {
       return NextResponse.json({ received: true })
     }
 
-    await markUploadPaymentCompletedByTransactionId(transactionId)
+    await markUploadPaymentCompletedByReference(reference)
     return NextResponse.json({ received: true })
   } catch (err) {
     console.error("[payments/webhook]", err)
