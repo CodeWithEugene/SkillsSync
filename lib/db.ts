@@ -451,6 +451,137 @@ export async function getOnchainAttestation(userId: string): Promise<OnchainAtte
   return data ? mapOnchainAttestationFromDb(data) : null
 }
 
+// ── Upload payments (Lipana pay-per-upload) ─────────────────────────────────────
+
+export type UploadPayment = {
+  id: string
+  userId: string
+  reference: string
+  amount: number
+  status: "pending" | "completed" | "failed"
+  lipanaTransactionId: string | null
+  consumedAt: string | null
+  createdAt: string
+}
+
+function mapUploadPaymentFromDb(row: any): UploadPayment {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    reference: row.reference,
+    amount: row.amount,
+    status: row.status,
+    lipanaTransactionId: row.lipana_transaction_id,
+    consumedAt: row.consumed_at,
+    createdAt: row.created_at,
+  }
+}
+
+export async function createUploadPayment(
+  userId: string,
+  reference: string,
+  amount: number
+): Promise<UploadPayment> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("upload_payments")
+    .insert({ user_id: userId, reference, amount, status: "pending" })
+    .select()
+    .single()
+  if (error) throw error
+  return mapUploadPaymentFromDb(data)
+}
+
+export async function updateUploadPayment(
+  id: string,
+  updates: { status?: string; lipana_transaction_id?: string; consumed_at?: string | null }
+): Promise<void> {
+  const supabase = await createClient()
+  const { error } = await supabase.from("upload_payments").update(updates).eq("id", id)
+  if (error) throw error
+}
+
+export async function getUploadPaymentByReference(reference: string): Promise<UploadPayment | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("upload_payments")
+    .select("*")
+    .eq("reference", reference)
+    .maybeSingle()
+  if (error) throw error
+  return data ? mapUploadPaymentFromDb(data) : null
+}
+
+export async function getUploadPaymentByLipanaTransactionId(
+  lipanaTransactionId: string
+): Promise<UploadPayment | null> {
+  const { createAdminClient } = await import("@/lib/supabase/admin")
+  const admin = createAdminClient()
+  const { data, error } = await admin
+    .from("upload_payments")
+    .select("*")
+    .eq("lipana_transaction_id", lipanaTransactionId)
+    .maybeSingle()
+  if (error) throw error
+  return data ? mapUploadPaymentFromDb(data) : null
+}
+
+export async function setUploadPaymentLipanaTransactionId(
+  id: string,
+  lipanaTransactionId: string
+): Promise<void> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("upload_payments")
+    .update({ lipana_transaction_id: lipanaTransactionId })
+    .eq("id", id)
+  if (error) throw error
+}
+
+export async function markUploadPaymentCompletedByTransactionId(
+  lipanaTransactionId: string
+): Promise<void> {
+  const { createAdminClient } = await import("@/lib/supabase/admin")
+  const admin = createAdminClient()
+  const { error } = await admin
+    .from("upload_payments")
+    .update({ status: "completed" })
+    .eq("lipana_transaction_id", lipanaTransactionId)
+  if (error) throw error
+}
+
+export async function hasUnconsumedUploadCredit(userId: string): Promise<boolean> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("upload_payments")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("status", "completed")
+    .is("consumed_at", null)
+    .limit(1)
+  if (error) throw error
+  return (data?.length ?? 0) > 0
+}
+
+export async function consumeOneUploadCredit(userId: string): Promise<boolean> {
+  const supabase = await createClient()
+  const { data: row } = await supabase
+    .from("upload_payments")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("status", "completed")
+    .is("consumed_at", null)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .single()
+  if (!row) return false
+  const { error } = await supabase
+    .from("upload_payments")
+    .update({ consumed_at: new Date().toISOString() })
+    .eq("id", row.id)
+  return !error
+}
+
 // ── Public Profile ────────────────────────────────────────────────────────────
 
 export async function toggleProfilePublic(userId: string, isPublic: boolean): Promise<void> {

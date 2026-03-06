@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { createDocument } from "@/lib/db"
+import { createDocument, consumeOneUploadCredit } from "@/lib/db"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
@@ -11,6 +11,14 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const consumed = await consumeOneUploadCredit(user.id)
+    if (!consumed) {
+      return NextResponse.json(
+        { error: "Payment required", code: "PAYMENT_REQUIRED" },
+        { status: 402 }
+      )
     }
 
     const formData = await request.formData()

@@ -24,7 +24,7 @@ if (existsSync(envPath)) {
   }
 }
 
-const migrations = ["007_wallet_address.sql", "008_onchain_attestations.sql"]
+const migrations = ["007_wallet_address.sql", "008_onchain_attestations.sql", "009_upload_payments.sql"]
 
 const connectionString =
   process.env.DATABASE_URL || process.env.SUPABASE_DB_URL

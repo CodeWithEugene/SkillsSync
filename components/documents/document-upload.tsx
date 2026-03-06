@@ -31,6 +31,9 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
 
         if (!response.ok) {
           const data = await response.json()
+          if (response.status === 402) {
+            throw new Error("Payment required. Please pay KES 20 first to upload.")
+          }
           throw new Error(data.error || "Upload failed")
         }
 

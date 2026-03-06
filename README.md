@@ -172,13 +172,15 @@
    );
    ```
 
+   **Optional – Pay-per-upload (Lipana M-Pesa):** Add `LIPANA_SECRET_KEY`, `LIPANA_WEBHOOK_SECRET`, and optionally `LIPANA_ENVIRONMENT=sandbox` to `.env`, run migration `scripts/009_upload_payments.sql` (via `pnpm run db:migrate` or Supabase SQL Editor), then set the webhook URL either by running `pnpm run lipana:webhook` (uses the SDK to set `https://skillssync.xyz/api/payments/webhook`) or manually in the Lipana dashboard.
+
    **Optional – Skills on Base (wallet + on-chain attestations):** Run migrations `scripts/007_wallet_address.sql` and `scripts/008_onchain_attestations.sql` either by:
 
    - **Option A:** Adding your Supabase Postgres connection string to `.env` as `DATABASE_URL` (Dashboard → Project Settings → Database → Connection string URI), then running:
      ```bash
      pnpm run db:migrate
      ```
-   - **Option B:** Opening the Supabase SQL Editor and running the contents of each file in order.
+   - **Option B:** Opening the Supabase SQL Editor and running the contents of each file in order. For pay-per-upload, also run `scripts/009_upload_payments.sql`.
 
 5. **Run the development server**
 
