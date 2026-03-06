@@ -6,9 +6,10 @@ import { useDropzone } from "react-dropzone"
 
 interface DocumentUploadProps {
   onUploadComplete?: () => void
+  onPaymentRequired?: () => void
 }
 
-export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
+export function DocumentUpload({ onUploadComplete, onPaymentRequired }: DocumentUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -32,6 +33,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
         if (!response.ok) {
           const data = await response.json()
           if (response.status === 402) {
+            onPaymentRequired?.()
             throw new Error("Payment required. Please pay KES 20 first to upload.")
           }
           throw new Error(data.error || "Upload failed")
@@ -44,7 +46,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps) {
         setIsUploading(false)
       }
     },
-    [onUploadComplete],
+    [onUploadComplete, onPaymentRequired],
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

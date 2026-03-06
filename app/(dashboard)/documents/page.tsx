@@ -99,6 +99,7 @@ export default function DocumentsPage() {
             setShowUpload(false)
             setHasCredit(false)
           }}
+          onPaymentRequired={() => setShowPaymentModal(true)}
         />
       )}
 

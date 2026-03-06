@@ -573,7 +573,7 @@ export async function consumeOneUploadCredit(userId: string): Promise<boolean> {
     .is("consumed_at", null)
     .order("created_at", { ascending: true })
     .limit(1)
-    .single()
+    .maybeSingle()
   if (!row) return false
   const { error } = await supabase
     .from("upload_payments")

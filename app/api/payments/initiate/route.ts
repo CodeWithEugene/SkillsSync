@@ -32,7 +32,9 @@ export async function POST(request: Request) {
       transactionDesc: "SkillSync document upload (KES 20)",
     })
 
-    const transactionId = (stkResponse as { transactionId?: string }).transactionId
+    const transactionId =
+      (stkResponse as { transactionId?: string; data?: { transactionId?: string } }).transactionId ??
+      (stkResponse as { data?: { transactionId?: string } }).data?.transactionId
     if (transactionId) {
       await setUploadPaymentLipanaTransactionId(payment.id, transactionId)
     }

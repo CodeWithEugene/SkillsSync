@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,6 +21,15 @@ export function PaymentModal({ open, onClose, onSuccess }: PaymentModalProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const normalizePhone = (raw: string): string => {
+    const s = raw.trim().replace(/\s/g, "")
+    if (s.startsWith("+254")) return s
+    if (s.startsWith("254") && s.length >= 12) return `+${s}`
+    if (s.startsWith("0") && s.length >= 10) return `+254${s.slice(1)}`
+    if (/^7\d{8}$/.test(s)) return `+254${s}`
+    return s.startsWith("+") ? s : `+254${s}`
+  }
+
   const handleInitiate = async () => {
     const trimmed = phone.trim()
     if (!trimmed) {
@@ -33,7 +42,7 @@ export function PaymentModal({ open, onClose, onSuccess }: PaymentModalProps) {
       const res = await fetch("/api/payments/initiate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: trimmed.startsWith("+") ? trimmed : `+254${trimmed.replace(/^0/, "")}` }),
+        body: JSON.stringify({ phone: normalizePhone(trimmed) }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to initiate payment")
@@ -100,23 +109,31 @@ function PaymentPending({
   onSuccess: () => void
   onClose: () => void
 }) {
+  const onSuccessRef = useRef(onSuccess)
+  const onCloseRef = useRef(onClose)
+  onSuccessRef.current = onSuccess
+  onCloseRef.current = onClose
+
   useEffect(() => {
     let cancelled = false
     const interval = setInterval(async () => {
       if (cancelled) return
-      const res = await fetch(`/api/payments/status/${reference}`)
-      const data = await res.json()
-      if (data.status === "completed") {
-        onSuccess()
-        onClose()
-        clearInterval(interval)
+      try {
+        const res = await fetch(`/api/payments/status/${encodeURIComponent(reference)}`)
+        const data = await res.json()
+        if (data.status === "completed") {
+          onSuccessRef.current()
+          onCloseRef.current()
+        }
+      } catch {
+        // ignore network errors, will retry
       }
     }, 2500)
     return () => {
       cancelled = true
       clearInterval(interval)
     }
-  }, [reference, onSuccess, onClose])
+  }, [reference])
 
   return (
     <div className="space-y-3 text-center">

@@ -14,12 +14,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
     }
 
-    const payload = JSON.parse(rawBody) as { event?: string; data?: { transactionId?: string } }
-    if (payload.event !== "payment.success" || !payload.data?.transactionId) {
+    const payload = JSON.parse(rawBody) as {
+      event?: string
+      data?: { transactionId?: string; transaction_id?: string }
+    }
+    if (payload.event !== "payment.success") {
+      return NextResponse.json({ received: true })
+    }
+    const transactionId =
+      payload.data?.transactionId ?? payload.data?.transaction_id
+    if (!transactionId) {
       return NextResponse.json({ received: true })
     }
 
-    await markUploadPaymentCompletedByTransactionId(payload.data.transactionId)
+    await markUploadPaymentCompletedByTransactionId(transactionId)
     return NextResponse.json({ received: true })
   } catch (err) {
     console.error("[payments/webhook]", err)
