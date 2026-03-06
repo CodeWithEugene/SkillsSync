@@ -33,13 +33,23 @@ export async function POST(request: Request) {
 
     await createUploadPayment(user.id, reference, amount) // amount stored for record; Paystack uses subunits
 
-    // Use a fixed production URL for callback so Paystack always redirects to a live deployment (avoids 404 DEPLOYMENT_NOT_FOUND on Vercel)
-    const baseUrl =
-      process.env.PAYSTACK_CALLBACK_BASE_URL?.trim() ||
-      process.env.NEXT_PUBLIC_APP_URL?.trim() ||
-      (request.headers.get("x-forwarded-proto") && request.headers.get("x-forwarded-host")
-        ? `${request.headers.get("x-forwarded-proto")}://${request.headers.get("x-forwarded-host")}`
-        : "http://localhost:3000")
+    // CRITICAL: Use only a fixed production URL for callback. Never use x-forwarded-host on Vercel
+    // or Paystack will redirect to a deployment-specific URL that can 404 (DEPLOYMENT_NOT_FOUND).
+    const isProduction = process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production"
+    const baseUrl = isProduction
+      ? (process.env.PAYSTACK_CALLBACK_BASE_URL?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || "")
+      : (process.env.PAYSTACK_CALLBACK_BASE_URL?.trim() ||
+          process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+          (request.headers.get("x-forwarded-proto") && request.headers.get("x-forwarded-host")
+            ? `${request.headers.get("x-forwarded-proto")}://${request.headers.get("x-forwarded-host")}`
+            : "http://localhost:3000"))
+    if (!baseUrl) {
+      console.error("[payments/initiate] Set PAYSTACK_CALLBACK_BASE_URL or NEXT_PUBLIC_APP_URL to your production URL (e.g. https://skillssync.xyz)")
+      return NextResponse.json(
+        { error: "Payment callback URL not configured. Please set PAYSTACK_CALLBACK_BASE_URL." },
+        { status: 500 }
+      )
+    }
     const callbackUrl = `${baseUrl.replace(/\/$/, "")}/payment-callback`
 
     const result = await paystackInitializeTransaction({
