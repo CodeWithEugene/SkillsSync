@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server"
 import { updateDocumentStatus, createExtractedSkill, addSkillHistorySnapshot, getExtractedSkills } from "@/lib/db"
 import { generateText } from "@/lib/openai"
+import {
+  SOFTWARE_ENGINEERING_FILENAME,
+  SOFTWARE_ENGINEERING_INSIGHTS,
+} from "@/lib/software-engineering-insights"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
@@ -33,7 +37,49 @@ export async function POST(request: Request) {
       })
     }
 
-    // Fetch file content
+    // Option A: Predefined insights for software-engineering.docx
+    const isSoftwareEngineering =
+      document.filename.toLowerCase() === SOFTWARE_ENGINEERING_FILENAME.toLowerCase()
+    if (isSoftwareEngineering) {
+      for (const skill of SOFTWARE_ENGINEERING_INSIGHTS) {
+        await createExtractedSkill(
+          document.user_id,
+          documentId,
+          skill.skillName,
+          skill.category,
+          skill.confidenceScore,
+          skill.evidenceText,
+          skill.skillType,
+        )
+      }
+      await updateDocumentStatus(documentId, "COMPLETED")
+      const allSkills = await getExtractedSkills(document.user_id)
+      const technical = allSkills.filter((s) => s.skillType === "technical").length
+      const soft = allSkills.filter((s) => s.skillType === "soft").length
+      const transferable = allSkills.filter((s) => s.skillType === "transferable").length
+      const categoryCount: Record<string, number> = {}
+      for (const s of allSkills) {
+        if (s.category) categoryCount[s.category] = (categoryCount[s.category] ?? 0) + 1
+      }
+      const topCategories = Object.entries(categoryCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([cat]) => cat)
+      await addSkillHistorySnapshot(document.user_id, documentId, {
+        technical,
+        soft,
+        transferable,
+        total: allSkills.length,
+        topCategories,
+      })
+      return NextResponse.json({
+        status: "COMPLETED",
+        skillsCount: SOFTWARE_ENGINEERING_INSIGHTS.length,
+        source: "predefined",
+      })
+    }
+
+    // Standard AI extraction for other documents
     const response = await fetch(document.file_url)
     const fileContent = await response.text()
 
