@@ -22,10 +22,13 @@ function getTransporter() {
 
 function buildAuthNotificationHtml(type: "signup" | "login"): string {
   const isSignup = type === "signup"
-  const title = isSignup ? "Welcome to SkillsSync" : "You signed in to SkillsSync"
+  const title = isSignup ? "Welcome to SkillsSync!" : "You signed in to SkillsSync"
   const message = isSignup
-    ? "Your account has been created. Start building your skill profile and get verified on-chain."
+    ? "You successfully created your SkillsSync account."
     : "You successfully signed in to your SkillsSync account."
+  const subtext = isSignup
+    ? "We're glad to have you. Start building your skill profile and get verified on-chain."
+    : "If you did not sign in, please secure your account by changing your password."
 
   return `
 <!DOCTYPE html>
@@ -35,25 +38,20 @@ function buildAuthNotificationHtml(type: "signup" | "login"): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
 </head>
-<body style="margin:0; padding:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f4f4f5;">
-    <tr>
-      <td align="center" style="padding: 40px 20px;">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 520px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-          <tr>
-            <td style="padding: 48px 32px; text-align: center;">
-              <div style="margin-bottom: 32px;">
-                <img src="${LOGO_URL}" alt="SkillsSync" width="160" height="160" style="display: block; margin: 0 auto; max-width: 160px; height: auto;" />
-              </div>
-              <h1 style="margin: 0 0 16px; font-size: 22px; font-weight: 600; color: #18181b;">${title}</h1>
-              <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #52525b;">${message}</p>
-              <p style="margin: 24px 0 0; font-size: 13px; color: #71717a;">— The SkillsSync Team</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+<body style="margin:0; padding:0; font-family: 'Segoe UI', Arial, sans-serif; background: #f4f8fb;">
+  <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f4f8fb; padding: 32px; border-radius: 12px; max-width: 420px; margin: 0 auto; border: 1px solid #e5e7eb;">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <img src="${LOGO_URL}" alt="SkillsSync Logo" style="width: 240px; height: 120px; object-fit: contain; display: inline-block; margin-bottom: 8px;" />
+      <h1 style="color: #0190fe; font-size: 2rem; margin: 0;">${title}</h1>
+    </div>
+    <p style="color: #111827; font-size: 1.1rem; margin-bottom: 24px; text-align: center;">
+      ${message}
+    </p>
+    <p style="color: #374151; font-size: 1rem; text-align: center; margin-bottom: 0;">
+      <span style="font-size: 0.85rem;">${subtext}</span><br><br>
+      <span style="color: #6b7280; font-size: 0.95rem;">— The <a href="https://www.skillssync.xyz/" style="color: #0190fe; text-decoration: none;">SkillsSync</a> Team</span>
+    </p>
+  </div>
 </body>
 </html>
 `.trim()
