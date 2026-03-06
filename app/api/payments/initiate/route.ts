@@ -61,9 +61,19 @@ export async function POST(request: Request) {
       metadata: phone ? { phone: typeof phone === "string" ? phone : "" } : undefined,
     })
 
+    // Append phone to checkout URL so Paystack can prefill the M-PESA number (254... format)
+    let authUrl = result.authorization_url
+    if (phone && typeof phone === "string") {
+      const normalized = phone.replace(/^\+/, "").trim()
+      if (normalized) {
+        const sep = authUrl.includes("?") ? "&" : "?"
+        authUrl = `${authUrl}${sep}mobile_number=${encodeURIComponent(normalized)}&phone=${encodeURIComponent(normalized)}`
+      }
+    }
+
     return NextResponse.json({
       reference: result.reference,
-      authorization_url: result.authorization_url,
+      authorization_url: authUrl,
       access_code: result.access_code,
       message: "Complete payment in the popup.",
     })

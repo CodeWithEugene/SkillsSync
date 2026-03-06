@@ -3,13 +3,16 @@
 import type { Document } from "@/lib/db"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { File, Clock, CheckCircle, XCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { File, Clock, CheckCircle, XCircle, Trash2 } from "lucide-react"
 
 interface DocumentListProps {
   documents: Document[]
+  onDelete?: (doc: Document) => void
+  deletingId?: string | null
 }
 
-export function DocumentList({ documents }: DocumentListProps) {
+export function DocumentList({ documents, onDelete, deletingId }: DocumentListProps) {
   if (documents.length === 0) {
     return (
       <Card className="border-dashed">
@@ -25,7 +28,7 @@ export function DocumentList({ documents }: DocumentListProps) {
   return (
     <div className="space-y-3">
       {documents.map((doc) => (
-        <Card key={doc.id} className="transition-all hover:shadow-md hover:border-primary/20 cursor-pointer group">
+        <Card key={doc.id} className="transition-all hover:shadow-md hover:border-primary/20 group">
           <CardContent className="flex items-center gap-4 p-4">
             <div
               className={`flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors ${
@@ -57,6 +60,21 @@ export function DocumentList({ documents }: DocumentListProps) {
               {doc.status === "FAILED" && <XCircle className="mr-1.5 size-3" />}
               {doc.status}
             </Badge>
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0 text-muted-foreground hover:text-destructive"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDelete(doc)
+                }}
+                disabled={deletingId === doc.id}
+                aria-label={`Delete ${doc.filename}`}
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            )}
           </CardContent>
         </Card>
       ))}

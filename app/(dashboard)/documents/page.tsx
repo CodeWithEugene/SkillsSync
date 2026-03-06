@@ -14,6 +14,7 @@ export default function DocumentsPage() {
   const [showUpload, setShowUpload] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [hasCredit, setHasCredit] = useState<boolean | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     document.title = "Documents | SkillSync"
@@ -68,6 +69,20 @@ export default function DocumentsPage() {
     fetchCredits()
   }, [showUpload, showPaymentModal])
 
+  const handleDelete = async (doc: Document) => {
+    setDeletingId(doc.id)
+    try {
+      const res = await fetch(`/api/documents/${doc.id}`, { method: "DELETE" })
+      if (res.ok) {
+        await fetchDocuments()
+      }
+    } catch (err) {
+      console.error("Failed to delete document:", err)
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   const handleUploadClick = async () => {
     const res = await fetch("/api/payments/credits")
     const data = res.ok ? await res.json() : { hasCredit: false }
@@ -120,7 +135,11 @@ export default function DocumentsPage() {
         {isLoading ? (
           <p className="text-muted-foreground">Loading documents...</p>
         ) : (
-          <DocumentList documents={documents} />
+          <DocumentList
+            documents={documents}
+            onDelete={handleDelete}
+            deletingId={deletingId}
+          />
         )}
       </div>
     </div>
