@@ -111,7 +111,7 @@ export default async function DashboardPage() {
         <CareerGuidanceWidget
           initialGuidance={guidance}
           userHasSkills={userHasSkills}
-          careerGoal={userGoal.careerGoal}
+          careerGoal={userGoal.socTitle ?? userGoal.careerGoal ?? ""}
         />
         <SkillTimeline initialHistory={skillHistory} />
       </div>

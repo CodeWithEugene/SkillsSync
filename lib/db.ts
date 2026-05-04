@@ -28,6 +28,8 @@ export type UserGoal = {
   wantToStudy: string | null
   studyDuration: string | null
   careerGoal: string | null
+  socCode: string | null
+  socTitle: string | null
   skillGoal: string | null
   educationLevel: string | null
   studyYear: string | null
@@ -99,6 +101,8 @@ function mapUserGoalFromDb(goal: any): UserGoal {
     wantToStudy: goal.want_to_study,
     studyDuration: goal.study_duration,
     careerGoal: goal.career_goal,
+    socCode: goal.soc_code ?? null,
+    socTitle: goal.soc_title ?? null,
     skillGoal: goal.skill_goal,
     educationLevel: goal.education_level,
     studyYear: goal.study_year,
@@ -245,6 +249,8 @@ export async function createUserGoal(
     wantToStudy?: string
     studyDuration?: string
     careerGoal?: string
+    socCode?: string | null
+    socTitle?: string | null
     skillGoal?: string
     educationLevel?: string
     studyYear?: string
@@ -261,6 +267,8 @@ export async function createUserGoal(
       want_to_study: goalData.wantToStudy,
       study_duration: goalData.studyDuration,
       career_goal: goalData.careerGoal,
+      soc_code: goalData.socCode ?? null,
+      soc_title: goalData.socTitle ?? null,
       skill_goal: goalData.skillGoal,
       education_level: goalData.educationLevel,
       study_year: goalData.studyYear,
@@ -282,6 +290,8 @@ export async function updateUserGoal(
     wantToStudy?: string
     studyDuration?: string
     careerGoal?: string
+    socCode?: string | null
+    socTitle?: string | null
     skillGoal?: string
     educationLevel?: string
     studyYear?: string
@@ -296,6 +306,8 @@ export async function updateUserGoal(
   if (goalData.wantToStudy !== undefined) updatePayload.want_to_study = goalData.wantToStudy
   if (goalData.studyDuration !== undefined) updatePayload.study_duration = goalData.studyDuration
   if (goalData.careerGoal !== undefined) updatePayload.career_goal = goalData.careerGoal
+  if (goalData.socCode !== undefined) updatePayload.soc_code = goalData.socCode
+  if (goalData.socTitle !== undefined) updatePayload.soc_title = goalData.socTitle
   if (goalData.skillGoal !== undefined) updatePayload.skill_goal = goalData.skillGoal
   if (goalData.educationLevel !== undefined) updatePayload.education_level = goalData.educationLevel
   if (goalData.studyYear !== undefined) updatePayload.study_year = goalData.studyYear

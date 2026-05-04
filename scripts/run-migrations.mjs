@@ -24,7 +24,14 @@ if (existsSync(envPath)) {
   }
 }
 
-const migrations = ["007_wallet_address.sql", "008_onchain_attestations.sql", "009_upload_payments.sql"]
+// 010_onet_tables.sql is intentionally excluded — it's owned by onet-import.mjs
+// (it DROPs and rebuilds the O*NET reference tables on every run).
+const migrations = [
+  "007_wallet_address.sql",
+  "008_onchain_attestations.sql",
+  "009_upload_payments.sql",
+  "011_user_soc_code.sql",
+]
 
 const connectionString =
   process.env.DATABASE_URL || process.env.SUPABASE_DB_URL

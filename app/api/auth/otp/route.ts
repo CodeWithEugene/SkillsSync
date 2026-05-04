@@ -6,7 +6,10 @@ const EMAIL_USER = process.env.GMAIL_USER
 const EMAIL_PASS = process.env.GMAIL_APP_PASSWORD
 
 export async function POST(request: NextRequest) {
-  const { email, action, code } = await request.json()
+  const body = await request.json()
+  const action: string | undefined = body.action
+  const code: string | undefined = body.code
+  const email: string | undefined = body.email
   if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 })
 
   const supabase = await createClient()
@@ -36,6 +39,9 @@ export async function POST(request: NextRequest) {
   }
 
   if (action === "verify") {
+    if (!code) {
+      return NextResponse.json({ error: "OTP code is required" }, { status: 400 })
+    }
     // Verify OTP using Supabase's built-in verification
     const { data: authData, error: verifyError } = await supabase.auth.verifyOtp({
       email,
@@ -61,9 +67,9 @@ export async function POST(request: NextRequest) {
     const redirectPath = userGoal?.onboarding_completed ? "/dashboard" : "/onboarding"
 
     // Send sign-in notification email (fire-and-forget)
-    const email = authData.user.email
-    if (email) {
-      sendAuthNotification(email, "login").catch((err) => console.error("Auth notification email failed:", err))
+    const verifiedEmail = authData.user.email
+    if (verifiedEmail) {
+      sendAuthNotification(verifiedEmail, "login").catch((err) => console.error("Auth notification email failed:", err))
     }
 
     // OTP verified successfully - session is automatically created by Supabase

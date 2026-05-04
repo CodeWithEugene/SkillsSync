@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Sparkles, Target, GraduationCap, BookOpen, TrendingUp, ListChecks } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { CareerPicker, type PickedCareer } from "@/components/career/career-picker"
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -18,12 +19,27 @@ export default function OnboardingPage() {
 
   const [formData, setFormData] = useState({
     careerGoal: "",
+    socCode: "" as string | "",
+    socTitle: "" as string | "",
     educationLevel: "",
     currentStudy: "",
     studyYear: "",
     courses: "",
     topPriority: "",
   })
+
+  const pickedCareer: PickedCareer | null = formData.socCode
+    ? { socCode: formData.socCode, socTitle: formData.socTitle }
+    : null
+
+  function handleCareerPick(picked: PickedCareer | null) {
+    setFormData((f) => ({
+      ...f,
+      socCode: picked?.socCode ?? "",
+      socTitle: picked?.socTitle ?? "",
+      careerGoal: picked?.socTitle ?? "",
+    }))
+  }
 
   const totalSteps = 6
   const progress = (step / totalSteps) * 100
@@ -93,17 +109,17 @@ export default function OnboardingPage() {
                 <Target className="size-5 sm:size-6 text-primary flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-sm sm:text-base">Career Goal</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">What&apos;s your ultimate career goal?</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Pick the career you&apos;re aiming for. Your gap analysis will be benchmarked against it.
+                  </p>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="careerGoal">What is your ultimate career goal?</Label>
-                <Input
-                  id="careerGoal"
-                  placeholder="e.g., Data Scientist, Full Stack Developer, UX Designer..."
-                  value={formData.careerGoal}
-                  onChange={(e) => setFormData({ ...formData, careerGoal: e.target.value })}
-                />
+                <Label>What is your ultimate career goal?</Label>
+                <CareerPicker value={pickedCareer} onChange={handleCareerPick} autoFocus />
+                <p className="text-xs text-muted-foreground">
+                  Type a job title to search the O*NET occupation database (1,000+ careers).
+                </p>
               </div>
             </div>
           )}
@@ -248,7 +264,12 @@ export default function OnboardingPage() {
               </Button>
             )}
             {step < totalSteps ? (
-              <Button type="button" onClick={handleNext} className="w-full sm:flex-1">
+              <Button
+                type="button"
+                onClick={handleNext}
+                disabled={step === 1 && !formData.socCode}
+                className="w-full sm:flex-1"
+              >
                 Next
               </Button>
             ) : (

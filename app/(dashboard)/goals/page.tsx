@@ -1,7 +1,8 @@
 import { requireAuth } from "@/lib/supabase-auth"
 import { getUserGoal } from "@/lib/db"
-import { Target, GraduationCap, BookOpen, Calendar, TrendingUp } from "lucide-react"
+import { GraduationCap, BookOpen, Calendar, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CareerGoalCard } from "@/components/profile/career-goal-card"
 import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 
@@ -25,29 +26,12 @@ export default async function GoalsPage() {
       </div>
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
-        {/* Career Goal Card */}
-        <Card className="bento-card bento-card-primary hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] transition-all duration-300 group">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-primary/10 group-hover:bg-primary-foreground/20 p-3">
-                <Target className="size-7 text-primary group-hover:text-primary-foreground" />
-              </div>
-              <div>
-                <CardTitle className="text-xl sm:text-2xl group-hover:text-primary-foreground">Career Goal</CardTitle>
-                <CardDescription className="text-sm group-hover:text-primary-foreground/80">
-                  Your ultimate career aspiration
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="rounded-2xl bg-background/50 group-hover:bg-primary-foreground/10 p-4 sm:p-6">
-              <p className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-primary-foreground">
-                {userGoal.careerGoal || "Not set"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Career Goal Card — editable, bound to O*NET SOC */}
+        <CareerGoalCard
+          initialSocCode={userGoal.socCode}
+          initialSocTitle={userGoal.socTitle}
+          initialCareerGoal={userGoal.careerGoal}
+        />
 
         {/* Education & Study Card */}
         <Card className="bento-card bento-card-accent hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] transition-all duration-300 group">
