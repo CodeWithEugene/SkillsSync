@@ -52,7 +52,14 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="w-80 p-0 bg-sidebar border-sidebar-border">
         <div className="px-6 pt-6 pb-4 border-b border-sidebar-border">
-          <Image src="/logo.png" alt="SkillSync" width={140} height={140} className="h-7 w-auto" />
+          <Image
+            src="/logo.png"
+            alt="SkillSync"
+            width={595}
+            height={118}
+            priority
+            className="h-9 w-auto max-w-[200px] object-contain object-left"
+          />
         </div>
 
         <nav className="flex-1 overflow-y-auto px-4 py-4 scrollbar-primary">

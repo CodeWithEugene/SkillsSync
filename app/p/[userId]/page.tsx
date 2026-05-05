@@ -67,9 +67,9 @@ export default async function PublicProfilePage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border sticky top-0 z-10 bg-background/95 backdrop-blur">
-        <div className="max-w-4xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="SkillSync" className="h-7 w-auto" />
+          <img src="/logo.png" alt="SkillSync" className="h-9 w-auto max-w-[200px] object-contain object-left" />
           <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
             Public profile
           </span>

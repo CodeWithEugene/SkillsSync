@@ -7,9 +7,9 @@ export default function CheckEmailPage() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
       <header className="border-b border-border">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 h-14 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            <Image src="/logo.png" alt="SkillSync" width={120} height={120} className="h-7 w-auto" />
+            <Image src="/logo.png" alt="SkillSync" width={595} height={118} priority className="h-9 w-auto max-w-[200px] object-contain object-left" />
           </Link>
           <ThemeToggle />
         </div>

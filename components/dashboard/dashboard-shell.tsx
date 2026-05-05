@@ -63,12 +63,19 @@ export function DashboardShell({ children, user: _user, firstName: _firstName }:
           collapsed ? "w-[72px]" : "w-[244px]"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-sidebar-border p-4 h-14">
-          <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center justify-between border-b border-sidebar-border px-4 h-16">
+          <Link href="/dashboard" className="flex items-center min-w-0 flex-1">
             {collapsed ? (
-              <Image src="/favicon.svg" alt="SkillSync" width={28} height={28} />
+              <Image src="/favicon.svg" alt="SkillSync" width={32} height={32} className="shrink-0" />
             ) : (
-              <Image src="/logo.png" alt="SkillSync" width={120} height={120} className="h-7 w-auto" />
+              <Image
+                src="/logo.png"
+                alt="SkillSync"
+                width={595}
+                height={118}
+                priority
+                className="h-9 w-auto max-w-[210px] object-contain object-left"
+              />
             )}
           </Link>
           <Button
@@ -76,6 +83,7 @@ export function DashboardShell({ children, user: _user, firstName: _firstName }:
             size="icon-sm"
             onClick={() => setCollapsed((c) => !c)}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="shrink-0"
           >
             {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
           </Button>
@@ -142,7 +150,7 @@ export function DashboardShell({ children, user: _user, firstName: _firstName }:
       <div className="flex flex-1 flex-col min-w-0">
         <header className="flex items-center justify-between border-b border-border bg-background px-5 h-14 md:hidden">
           <Link href="/dashboard" className="flex items-center">
-            <Image src="/logo.png" alt="SkillSync" width={120} height={120} className="h-7 w-auto" />
+            <Image src="/logo.png" alt="SkillSync" width={595} height={118} priority className="h-9 w-auto max-w-[200px] object-contain object-left" />
           </Link>
           <div className="flex items-center gap-1.5">
             <ThemeToggle />
