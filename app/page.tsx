@@ -15,16 +15,23 @@ export default async function HomePage() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden">
       {/* ── Masthead ───────────────────────────────────────────────────── */}
       <header className="border-b border-border">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt="SkillSync" width={595} height={118} priority className="h-9 w-auto max-w-[200px] object-contain object-left" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center min-w-0 shrink">
+            <Image
+              src="/logo.png"
+              alt="SkillSync"
+              width={595}
+              height={118}
+              priority
+              className="h-7 sm:h-9 w-auto max-w-[150px] sm:max-w-[200px] object-contain object-left"
+            />
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
               <Link href="/auth/login">Sign in</Link>
             </Button>
             <Button size="sm" asChild>
@@ -39,17 +46,14 @@ export default async function HomePage() {
 
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <main className="flex-1">
-        <section className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 pt-12 sm:pt-20 lg:pt-28 pb-16 sm:pb-24">
+        <section className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-10 sm:pt-20 lg:pt-28 pb-12 sm:pb-24">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-end">
-            <div className="lg:col-span-8 space-y-7">
+            <div className="lg:col-span-8 space-y-6 sm:space-y-7 min-w-0">
               <p className="editorial-eyebrow">Issue 01 — A new contract for graduate skills</p>
 
-              <h1 className="display-serif text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[0.92] tracking-tight">
-                Turn coursework
-                <br />
-                into{" "}
-                <span className="italic font-light text-primary">verifiable</span>
-                <br className="hidden sm:block" />
+              <h1 className="display-serif text-[2.4rem] sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[0.95] sm:leading-[0.92] tracking-tight break-words">
+                Turn coursework into{" "}
+                <span className="italic font-light text-primary">verifiable</span>{" "}
                 career evidence.
               </h1>
 
@@ -61,36 +65,36 @@ export default async function HomePage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button size="lg" asChild>
+                <Button size="lg" asChild className="w-full sm:w-auto">
                   <Link href="/auth/register" className="gap-2">
                     Start free
                     <ArrowUpRight className="size-4" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
                   <Link href="/auth/login">I have an account</Link>
                 </Button>
               </div>
             </div>
 
             {/* Asymmetric stat column — paper-block aside */}
-            <aside className="lg:col-span-4 lg:pl-8 lg:border-l lg:border-border space-y-8">
+            <aside className="lg:col-span-4 lg:pl-8 lg:border-l lg:border-border grid grid-cols-3 gap-4 sm:gap-6 lg:grid-cols-1 lg:gap-8 pt-6 lg:pt-0 border-t border-border lg:border-t-0">
               {[
                 { n: "1,500", label: "Students piloted at JKUAT", k: "01" },
                 { n: "8,400", label: "Documents analysed", k: "02" },
-                { n: "1,016", label: "Careers mapped via O*NET", k: "03" },
+                { n: "1,016", label: "Careers via O*NET", k: "03" },
               ].map((s) => (
-                <div key={s.k} className="space-y-1">
+                <div key={s.k} className="space-y-1 min-w-0">
                   <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
                     {s.k}
                   </p>
                   <p
-                    className="display-serif text-5xl tabular-nums leading-none"
+                    className="display-serif text-3xl sm:text-4xl lg:text-5xl tabular-nums leading-none"
                     style={{ fontVariationSettings: '"opsz" 144, "SOFT" 25' }}
                   >
                     {s.n}
                   </p>
-                  <p className="text-xs text-muted-foreground pt-1">{s.label}</p>
+                  <p className="text-xs text-muted-foreground pt-1 leading-snug">{s.label}</p>
                 </div>
               ))}
             </aside>
@@ -99,8 +103,8 @@ export default async function HomePage() {
 
         {/* ── How it works — three numbered editorial blocks ───────────── */}
         <section className="border-t border-border">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-16 sm:py-24">
-            <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 mb-12 sm:mb-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 py-12 sm:py-24">
+            <div className="grid lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-16 mb-10 sm:mb-16">
               <div className="lg:col-span-4">
                 <p className="editorial-eyebrow mb-3">Method</p>
                 <h2 className="display-serif text-3xl sm:text-4xl leading-tight tracking-tight">
@@ -137,7 +141,7 @@ export default async function HomePage() {
                     "Pick your target career — Software Developer, Data Scientist, Civil Engineer — and see what you have, what you lack, what to learn next.",
                 },
               ].map((s) => (
-                <div key={s.k} className="bg-background p-6 sm:p-8 space-y-3">
+                <div key={s.k} className="bg-background p-5 sm:p-8 space-y-3 min-w-0">
                   <p className="font-mono text-xs tracking-widest text-primary">{s.k}</p>
                   <h3 className="display-serif text-2xl sm:text-3xl leading-tight tracking-tight">
                     {s.title}
@@ -154,17 +158,17 @@ export default async function HomePage() {
 
         {/* ── Closing call — wide editorial pull ───────────────────────── */}
         <section className="border-t border-border bg-card">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-16 sm:py-20 grid lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-3">
+          <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 py-12 sm:py-20 grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+            <div className="lg:col-span-8 space-y-3 min-w-0">
               <p className="editorial-eyebrow">For students • For institutions • SDG 4 / 8 / 9</p>
-              <p className="display-serif text-3xl sm:text-4xl lg:text-5xl leading-[1.05] tracking-tight">
+              <p className="display-serif text-2xl sm:text-4xl lg:text-5xl leading-[1.1] sm:leading-[1.05] tracking-tight break-words">
                 Stop wondering if your degree is{" "}
                 <span className="italic font-light text-primary">working</span>.
                 Start measuring it.
               </p>
             </div>
             <div className="lg:col-span-4 lg:flex lg:justify-end">
-              <Button size="lg" asChild>
+              <Button size="lg" asChild className="w-full sm:w-auto">
                 <Link href="/auth/register" className="gap-2">
                   Create your profile
                   <ArrowUpRight className="size-4" />
@@ -177,7 +181,7 @@ export default async function HomePage() {
 
       {/* ── Colophon ───────────────────────────────────────────────────── */}
       <footer className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+        <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground text-center sm:text-left">
           <p className="font-mono tracking-wider">
             © {currentYear} SkillSync &nbsp;·&nbsp; JKUAT, Kenya
           </p>
