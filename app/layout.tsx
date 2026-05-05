@@ -29,38 +29,42 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 })
 
+const SITE_URL = "https://www.skillssync.xyz"
+const OG_IMAGE = "/og-image.png"
+const TITLE = "SkillSync — AI-powered skill tracking"
+const DESCRIPTION =
+  "Turn coursework into verifiable career evidence. SkillSync extracts skills from your documents and benchmarks them against O*NET career requirements."
+
 export const metadata: Metadata = {
   title: {
-    default: "SkillSync - AI-Powered Skill Tracking",
+    default: TITLE,
     template: "%s | SkillSync",
   },
-  description:
-    "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
-  generator: "v0.app",
-  metadataBase: new URL("https://skillsyncglobal.vercel.app"),
+  description: DESCRIPTION,
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: SITE_URL },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://skillsyncglobal.vercel.app",
+    url: SITE_URL,
     siteName: "SkillSync",
-    title: "SkillSync - AI-Powered Skill Tracking",
-    description:
-      "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
+    title: TITLE,
+    description: DESCRIPTION,
     images: [
       {
-        url: "/logo.png",
-        width: 128,
-        height: 128,
-        alt: "SkillSync Logo",
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "SkillSync — Turn coursework into verifiable career evidence",
+        type: "image/png",
       },
     ],
   },
   twitter: {
-    card: "summary",
-    title: "SkillSync - AI-Powered Skill Tracking",
-    description:
-      "Transform your documents into valuable skills with AI-powered analysis. Track your professional development effortlessly.",
-    images: ["/logo.png"],
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [OG_IMAGE],
   },
   icons: {
     icon: [
