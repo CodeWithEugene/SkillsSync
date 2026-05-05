@@ -2,6 +2,7 @@
 
 import { SkillsGrid } from "@/components/skills/skills-grid"
 import { RecordOnBase } from "@/components/skills/record-on-base"
+import { PageHeader } from "@/components/ui/page-header"
 import type { ExtractedSkill } from "@/lib/db"
 import { useEffect, useState } from "react"
 
@@ -16,33 +17,36 @@ export default function SkillsPage() {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const response = await fetch("/api/skills")
-        if (response.ok) {
-          const data = await response.json()
-          setSkills(data)
-        }
-      } catch (error) {
-        console.error("[v0] Failed to fetch skills:", error)
+        const res = await fetch("/api/skills")
+        if (res.ok) setSkills(await res.json())
+      } catch (e) {
+        console.error("Failed to fetch skills:", e)
       } finally {
         setIsLoading(false)
       }
     }
-
     fetchSkills()
   }, [])
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Skills</h1>
-        <p className="text-muted-foreground text-sm sm:text-base">
-          View all skills automatically extracted from your documents
-        </p>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        eyebrow="05 — Skills"
+        title={
+          <>
+            Your <span className="italic font-light text-primary">competency</span> ledger.
+          </>
+        }
+        description="Every skill we extracted, with evidence quoted from your documents. Anchor it on Base for tamper-evident proof."
+      />
 
       <RecordOnBase skills={skills} />
 
-      {isLoading ? <p className="text-muted-foreground">Loading skills...</p> : <SkillsGrid skills={skills} />}
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading skills…</p>
+      ) : (
+        <SkillsGrid skills={skills} />
+      )}
     </div>
   )
 }

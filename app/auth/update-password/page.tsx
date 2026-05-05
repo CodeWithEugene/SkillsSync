@@ -1,11 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
@@ -13,7 +11,11 @@ import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Loader2, CheckCircle2, XCircle } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
-import { validatePasswordStrength, getPasswordRequirements, getPasswordStrengthColor } from "@/lib/password-validation"
+import {
+  validatePasswordStrength,
+  getPasswordRequirements,
+  getPasswordStrengthColor,
+} from "@/lib/password-validation"
 
 export default function UpdatePasswordPage() {
   const [password, setPassword] = useState("")
@@ -29,13 +31,10 @@ export default function UpdatePasswordPage() {
     document.title = "Update Password | SkillSync"
   }, [])
 
-  // Countdown and redirect after success
   useEffect(() => {
     if (success && countdown > 0) {
-      const timer = setTimeout(() => {
-        setCountdown(countdown - 1)
-      }, 1000)
-      return () => clearTimeout(timer)
+      const t = setTimeout(() => setCountdown((c) => c - 1), 1000)
+      return () => clearTimeout(t)
     } else if (success && countdown === 0) {
       router.push("/auth/login")
     }
@@ -45,174 +44,137 @@ export default function UpdatePasswordPage() {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-
     if (password !== confirmPassword) {
       setError("Passwords do not match")
       setIsLoading(false)
       return
     }
-
-    // Validate password strength
-    const passwordValidation = validatePasswordStrength(password)
-    if (!passwordValidation.isValid) {
-      setError(passwordValidation.errors.join(". "))
+    const validation = validatePasswordStrength(password)
+    if (!validation.isValid) {
+      setError(validation.errors.join(". "))
       setIsLoading(false)
       return
     }
-
     const supabase = createClient()
-
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: password
-      })
-      
+      const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
-
-      // Show success message and start countdown
       setSuccess(true)
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred")
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
       setIsLoading(false)
     }
   }
 
+  const validation = password ? validatePasswordStrength(password) : null
+
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Image
-              src="/logo.png"
-              alt="SkillSync Logo"
-              width={160}
-              height={160}
-              className="rounded-lg transition-transform group-hover:scale-110"
-            />
+    <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
+      <header className="border-b border-border">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 h-14 flex items-center justify-between">
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.png" alt="SkillSync" width={120} height={120} className="h-7 w-auto" />
           </Link>
           <ThemeToggle />
         </div>
       </header>
 
-      <div className="flex flex-1 items-center justify-center p-4 sm:p-6 md:p-10">
-        <div className="w-full max-w-sm">
-          <Card className="shadow-lg">
-            <CardHeader className="text-center space-y-1 sm:space-y-2 px-4 sm:px-6">
-              <CardTitle className="text-xl sm:text-2xl font-bold">Update your password</CardTitle>
-              <CardDescription className="text-sm">
-                Enter your new password below
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 sm:px-6">
-              {success ? (
-                <div className="space-y-4">
-                  <div className="rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 p-6 flex flex-col items-center gap-4">
-                    <CheckCircle2 className="size-16 text-green-600 dark:text-green-400" />
-                    <div className="text-center">
-                      <p className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
-                        Password Updated Successfully!
-                      </p>
-                      <p className="text-sm text-green-700 dark:text-green-300">
-                        Your password has been reset. You can now sign in with your new password.
-                      </p>
-                      <p className="text-sm text-green-600 dark:text-green-400 mt-4 font-medium">
-                        Redirecting to login in {countdown} second{countdown !== 1 ? 's' : ''}...
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => router.push("/auth/login")}
-                    className="w-full"
-                  >
-                    Go to Login Now
-                  </Button>
+      <div className="flex flex-1 items-center justify-center px-5 py-10 sm:py-16">
+        <div className="w-full max-w-md">
+          <div className="mb-8 space-y-2">
+            <p className="editorial-eyebrow">New password</p>
+            <h1 className="display-serif text-4xl sm:text-5xl leading-[1] tracking-tight">
+              Pick a new <span className="italic font-light text-primary">passphrase</span>.
+            </h1>
+          </div>
+
+          {success ? (
+            <div className="space-y-5">
+              <div className="rounded-md border border-success/30 bg-success/5 p-5 flex flex-col items-center gap-3 text-center">
+                <CheckCircle2 className="size-10 text-success" />
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-success">Password updated.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Redirecting to sign-in in {countdown}s…
+                  </p>
                 </div>
-              ) : (
-                <form onSubmit={handleUpdatePassword} className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">New Password</Label>
-                    {password && (
-                      <span className={`text-xs font-medium ${getPasswordStrengthColor(validatePasswordStrength(password).strength)}`}>
-                        {validatePasswordStrength(password).strength.toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    minLength={8}
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value)
-                      setShowPasswordRequirements(true)
-                    }}
-                    onFocus={() => setShowPasswordRequirements(true)}
-                    className="transition-all focus:ring-2 focus:ring-primary"
-                  />
-                  {showPasswordRequirements && password && (
-                    <div className="rounded-lg border bg-muted/30 p-3 space-y-1.5 text-xs">
-                      <p className="font-medium text-sm mb-2">Password Requirements:</p>
-                      {getPasswordRequirements(password).map((req, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          {req.met ? (
-                            <CheckCircle2 className="size-3.5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                          ) : (
-                            <XCircle className="size-3.5 text-muted-foreground flex-shrink-0" />
-                          )}
-                          <span className={req.met ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}>
-                            {req.text}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+              </div>
+              <Button onClick={() => router.push("/auth/login")} className="w-full">
+                Go to sign in
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-xs">New password</Label>
+                  {validation && (
+                    <span
+                      className={`font-mono text-[10px] uppercase tracking-widest ${getPasswordStrengthColor(validation.strength)}`}
+                    >
+                      {validation.strength}
+                    </span>
                   )}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="transition-all focus:ring-2 focus:ring-primary"
-                  />
-                  {confirmPassword && password !== confirmPassword && (
-                    <p className="text-xs text-destructive">Passwords do not match</p>
-                  )}
-                  {confirmPassword && password === confirmPassword && password.length > 0 && (
-                    <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
-                      <CheckCircle2 className="size-3" />
-                      Passwords match
-                    </p>
-                  )}
-                </div>
-                {error && (
-                  <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3">
-                    <p className="text-sm text-destructive">{error}</p>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    setShowPasswordRequirements(true)
+                  }}
+                  onFocus={() => setShowPasswordRequirements(true)}
+                />
+                {showPasswordRequirements && password && (
+                  <div className="rounded-md border border-border bg-muted/30 p-3 mt-2 space-y-1 text-xs">
+                    {getPasswordRequirements(password).map((req, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        {req.met ? (
+                          <CheckCircle2 className="size-3.5 text-success shrink-0" />
+                        ) : (
+                          <XCircle className="size-3.5 text-muted-foreground shrink-0" />
+                        )}
+                        <span className={req.met ? "text-success" : "text-muted-foreground"}>
+                          {req.text}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 )}
-                <Button
-                  type="submit"
-                  className="w-full transition-all hover:scale-[1.02]"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                      Updating password...
-                    </>
-                  ) : (
-                    "Update password"
-                  )}
-                </Button>
-              </form>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="confirm" className="text-xs">Confirm new password</Label>
+                <Input
+                  id="confirm"
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                {confirmPassword && password !== confirmPassword && (
+                  <p className="text-xs text-destructive">Passwords do not match.</p>
+                )}
+              </div>
+
+              {error && <p className="text-xs text-destructive">{error}</p>}
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Updating…
+                  </>
+                ) : (
+                  "Update password"
+                )}
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     </div>

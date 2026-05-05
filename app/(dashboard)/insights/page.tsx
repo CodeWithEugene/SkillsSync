@@ -15,6 +15,7 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react"
+import { PageHeader } from "@/components/ui/page-header"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Insights" }
@@ -99,15 +100,16 @@ export default async function InsightsPage() {
   ]
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="space-y-1 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight flex items-center gap-3">
-          <BarChart2 className="size-7 text-primary" /> Insights
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground">
-          A deep dive into your skills, growth, and career readiness.
-        </p>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        eyebrow="07 — Insights"
+        title={
+          <>
+            Looking <span className="italic font-light text-primary">closer</span>.
+          </>
+        }
+        description="A deeper read of your skill composition, document health, and growth over time."
+      />
 
       {/* Stat cards row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">

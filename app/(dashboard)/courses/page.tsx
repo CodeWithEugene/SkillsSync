@@ -1,9 +1,8 @@
 import { requireAuth } from "@/lib/supabase-auth"
 import { getCourses, getCareerGuidance } from "@/lib/db"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, Lightbulb } from "lucide-react"
 import CoursesList from "@/components/courses/courses-list"
+import { PageHeader } from "@/components/ui/page-header"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Courses" }
@@ -29,60 +28,48 @@ export default async function CoursesPage() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="space-y-1 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight flex items-center gap-3">
-          <BookOpen className="size-7 text-primary" /> Courses
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground">
-          Track courses you&apos;re taking or planning to close your skill gaps.
-        </p>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        eyebrow="06 — Courses"
+        title={
+          <>
+            What you&rsquo;re <span className="italic font-light text-primary">learning</span>.
+          </>
+        }
+        description="Track courses you&rsquo;re taking or planning, mapped to your skill gaps."
+      />
 
-      {/* Quick stats */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      {/* Stat row */}
+      <section className="grid grid-cols-3 gap-px bg-border border border-border">
         {[
-          { label: "Total", value: stats.total, className: "bento-card" },
-          { label: "Enrolled", value: stats.enrolled, className: "bento-card bento-card-info" },
-          { label: "Completed", value: stats.completed, className: "bento-card bento-card-success" },
-        ].map(({ label, value, className }) => (
-          <Card key={label} className={className}>
-            <CardContent className="pt-4 pb-4 text-center">
-              <p className="text-2xl font-bold">{value}</p>
-              <p className="text-xs text-muted-foreground">{label}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* AI gap suggestions */}
-      {aiSuggestedSkills.length > 0 && (
-        <Card className="bento-card bento-card-primary">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <div className="rounded-2xl bg-primary/10 p-2.5">
-                <Lightbulb className="size-5 text-primary" />
-              </div>
-              <CardTitle className="text-sm sm:text-base">Suggested Skills to Learn</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground mb-3">
-              Based on your AI career guidance, these are the top skills to focus on:
+          { label: "Total", value: stats.total },
+          { label: "Enrolled", value: stats.enrolled },
+          { label: "Completed", value: stats.completed },
+        ].map(({ label, value }) => (
+          <div key={label} className="bg-card p-5 sm:p-6">
+            <p className="editorial-eyebrow mb-2">{label}</p>
+            <p className="display-serif text-4xl sm:text-5xl tabular leading-none">
+              {String(value).padStart(2, "0")}
             </p>
-            <div className="flex flex-wrap gap-2">
-              {aiSuggestedSkills.map((skill) => (
-                <Badge
-                  key={skill}
-                  variant="outline"
-                  className="rounded-xl text-sm py-1 px-3 bg-primary/5 text-primary border-primary/20"
-                >
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
+      </section>
+
+      {aiSuggestedSkills.length > 0 && (
+        <section className="bento-card bento-card-primary space-y-3">
+          <p className="editorial-eyebrow">Suggested · from your gap analysis</p>
+          <div className="flex flex-wrap gap-1.5">
+            {aiSuggestedSkills.map((skill) => (
+              <Badge
+                key={skill}
+                variant="outline"
+                className="font-normal normal-case tracking-normal text-xs py-0.5 bg-primary/5 text-primary border-primary/30"
+              >
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        </section>
       )}
 
       <CoursesList initialCourses={courses} />

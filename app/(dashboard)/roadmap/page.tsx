@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import {
-  Map,
   Target,
   CheckCircle2,
   Circle,
@@ -21,6 +20,7 @@ import {
   FileText,
 } from "lucide-react"
 import Link from "next/link"
+import { PageHeader } from "@/components/ui/page-header"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Roadmap" }
@@ -139,15 +139,16 @@ export default async function RoadmapPage() {
   const progressPct = Math.round((completedMilestones / milestones.length) * 100)
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="space-y-1 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight flex items-center gap-3">
-          <Map className="size-7 text-primary" /> Career Roadmap
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground">
-          Your journey from where you are to where you want to be.
-        </p>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        eyebrow="02 — Roadmap"
+        title={
+          <>
+            From here <span className="italic font-light text-primary">to there</span>.
+          </>
+        }
+        description="Your career journey, charted: current standing, the gap, the destination."
+      />
 
       {/* 3-zone overview */}
       <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-3">
@@ -388,7 +389,7 @@ export default async function RoadmapPage() {
                 <p className="text-sm font-semibold">Upload Documents</p>
                 <p className="text-xs text-muted-foreground">Add more to improve your score</p>
               </div>
-              <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+              <ArrowRight className="size-4 text-muted-foreground transition-colors shrink-0" />
             </CardContent>
           </Card>
         </Link>
@@ -402,7 +403,7 @@ export default async function RoadmapPage() {
                 <p className="text-sm font-semibold">Browse Courses</p>
                 <p className="text-xs text-muted-foreground">Close your skill gaps faster</p>
               </div>
-              <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+              <ArrowRight className="size-4 text-muted-foreground transition-colors shrink-0" />
             </CardContent>
           </Card>
         </Link>
@@ -416,7 +417,7 @@ export default async function RoadmapPage() {
                 <p className="text-sm font-semibold">Match a Job</p>
                 <p className="text-xs text-muted-foreground">See how well you fit a role</p>
               </div>
-              <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+              <ArrowRight className="size-4 text-muted-foreground transition-colors shrink-0" />
             </CardContent>
           </Card>
         </Link>

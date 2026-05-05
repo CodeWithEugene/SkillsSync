@@ -1,15 +1,38 @@
 import { requireAuth } from "@/lib/supabase-auth"
-import { getDocuments, getExtractedSkills, getUserGoal, getCareerGuidance, getSkillHistory } from "@/lib/db"
+import {
+  getDocuments,
+  getExtractedSkills,
+  getUserGoal,
+  getCareerGuidance,
+  getSkillHistory,
+} from "@/lib/db"
 import { DocumentList } from "@/components/documents/document-list"
 import { CareerGuidanceWidget } from "@/components/dashboard/career-guidance-widget"
 import { SkillTimeline } from "@/components/dashboard/skill-timeline"
-import { FileText, Lightbulb, CheckCircle, Clock } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PageHeader } from "@/components/ui/page-header"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: "Dashboard",
+export const metadata: Metadata = { title: "Dashboard" }
+
+interface MetricBlockProps {
+  index: string
+  label: string
+  value: number | string
+  caption: string
+}
+function MetricBlock({ index, label, value, caption }: MetricBlockProps) {
+  return (
+    <div className="bg-card p-5 sm:p-6 metric-block">
+      <p className="font-mono text-[10px] tracking-widest text-muted-foreground/70">
+        {index}
+      </p>
+      <p className="editorial-eyebrow mt-1 mb-3">{label}</p>
+      <p className="metric-value text-5xl sm:text-6xl tabular">{value}</p>
+      <p className="text-xs text-muted-foreground mt-2">{caption}</p>
+    </div>
+  )
 }
 
 export default async function DashboardPage() {
@@ -27,104 +50,90 @@ export default async function DashboardPage() {
     getSkillHistory(user.id),
   ])
 
-  const completedDocs = documents.filter((doc) => doc.status === "COMPLETED").length
-  const processingDocs = documents.filter((doc) => doc.status === "PROCESSING").length
+  const completedDocs = documents.filter((d) => d.status === "COMPLETED").length
+  const processingDocs = documents.filter((d) => d.status === "PROCESSING").length
   const userHasSkills = skills.length > 0
+  const careerLabel = userGoal.socTitle ?? userGoal.careerGoal ?? ""
 
-  const firstName = user.user_metadata?.first_name || user.email?.split("@")[0] || "there"
+  const firstName =
+    user.user_metadata?.first_name || user.email?.split("@")[0] || "there"
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="space-y-1 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Welcome back, {firstName}!</h1>
-        <p className="text-base sm:text-lg text-muted-foreground">Here's your skill tracking overview.</p>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        eyebrow="01 — Dashboard"
+        title={
+          <>
+            Welcome back,{" "}
+            <span className="italic font-light text-primary">{firstName}</span>.
+          </>
+        }
+        description={
+          careerLabel
+            ? `Tracking progress toward ${careerLabel}.`
+            : "Set a career goal to start tracking your progress."
+        }
+      />
 
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
-        <Card className="bento-card bento-card-info hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium group-hover:text-primary-foreground">Documents</CardTitle>
-              <div className="rounded-xl bg-info/10 group-hover:bg-primary-foreground/20 p-2 transition-colors">
-                <FileText className="size-5 text-info group-hover:text-primary-foreground" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold group-hover:text-primary-foreground">{documents.length}</div>
-            <p className="text-xs text-muted-foreground group-hover:text-primary-foreground/80 mt-1">Total uploaded</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bento-card bento-card-success hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium group-hover:text-primary-foreground">Skills Found</CardTitle>
-              <div className="rounded-xl bg-success/10 group-hover:bg-primary-foreground/20 p-2 transition-colors">
-                <Lightbulb className="size-5 text-success group-hover:text-primary-foreground" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold group-hover:text-primary-foreground">{skills.length}</div>
-            <p className="text-xs text-muted-foreground group-hover:text-primary-foreground/80 mt-1">Unique skills</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bento-card bento-card-warning hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium group-hover:text-primary-foreground">Completed</CardTitle>
-              <div className="rounded-xl bg-warning/10 group-hover:bg-primary-foreground/20 p-2 transition-colors">
-                <CheckCircle className="size-5 text-warning group-hover:text-primary-foreground" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold group-hover:text-primary-foreground">{completedDocs}</div>
-            <p className="text-xs text-muted-foreground group-hover:text-primary-foreground/80 mt-1">
-              Documents analyzed
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bento-card hover:bg-primary hover:text-primary-foreground hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium group-hover:text-primary-foreground">Processing</CardTitle>
-              <div className="rounded-xl bg-muted group-hover:bg-primary-foreground/20 p-2 transition-colors">
-                <Clock className="size-5 text-muted-foreground group-hover:text-primary-foreground" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold group-hover:text-primary-foreground">{processingDocs}</div>
-            <p className="text-xs text-muted-foreground group-hover:text-primary-foreground/80 mt-1">
-              Currently analyzing
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Career Readiness + Timeline side by side on large screens */}
-      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-        <CareerGuidanceWidget
-          initialGuidance={guidance}
-          userHasSkills={userHasSkills}
-          careerGoal={userGoal.socTitle ?? userGoal.careerGoal ?? ""}
+      {/* Metric row — gap-px on a bordered grid produces clean editorial inner rules */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border stagger-rise">
+        <MetricBlock
+          index="01"
+          label="Documents"
+          value={documents.length.toString().padStart(2, "0")}
+          caption={`${completedDocs} analysed${processingDocs ? ` · ${processingDocs} in queue` : ""}`}
         />
-        <SkillTimeline initialHistory={skillHistory} />
-      </div>
+        <MetricBlock
+          index="02"
+          label="Skills"
+          value={skills.length.toString().padStart(2, "0")}
+          caption="Unique competencies extracted"
+        />
+        <MetricBlock
+          index="03"
+          label="Readiness"
+          value={guidance ? `${guidance.readinessScore}` : "—"}
+          caption={guidance ? "Out of 100, vs O*NET benchmark" : "Generate guidance to see"}
+        />
+        <MetricBlock
+          index="04"
+          label="Gaps"
+          value={guidance ? guidance.gaps.length.toString().padStart(2, "0") : "—"}
+          caption={
+            guidance
+              ? `${guidance.gaps.filter((g) => g.importance === "high").length} high priority`
+              : "Awaiting analysis"
+          }
+        />
+      </section>
 
-      <Card className="bento-card max-h-60 sm:max-h-80 flex flex-col overflow-hidden">
-        <CardHeader className="pb-3 sm:pb-4">
-          <CardTitle className="text-xl sm:text-2xl">Recent Documents</CardTitle>
-          <CardDescription className="text-sm">Your latest uploads</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto scrollbar-primary">
-          <DocumentList documents={documents.slice(0, 5)} />
-        </CardContent>
-      </Card>
+      {/* Asymmetric 7/5 split — guidance heavy, timeline beside */}
+      <section className="grid lg:grid-cols-12 gap-5 lg:gap-6">
+        <div className="lg:col-span-7">
+          <CareerGuidanceWidget
+            initialGuidance={guidance}
+            userHasSkills={userHasSkills}
+            careerGoal={careerLabel}
+          />
+        </div>
+        <div className="lg:col-span-5">
+          <SkillTimeline initialHistory={skillHistory} />
+        </div>
+      </section>
+
+      <section>
+        <Card className="bento-card max-h-72 sm:max-h-96 flex flex-col overflow-hidden p-0 gap-0">
+          <CardHeader className="pb-3 sm:pb-4 pt-5">
+            <p className="editorial-eyebrow">Library</p>
+            <CardTitle className="display-serif text-2xl sm:text-3xl tracking-tight font-normal">
+              Recent documents
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-y-auto scrollbar-primary pb-5">
+            <DocumentList documents={documents.slice(0, 5)} />
+          </CardContent>
+        </Card>
+      </section>
     </div>
   )
 }

@@ -42,7 +42,7 @@ export function DocumentList({ documents, onDelete, deletingId }: DocumentListPr
               <File className="size-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold truncate group-hover:text-primary transition-colors">{doc.filename}</p>
+              <p className="font-semibold truncate transition-colors">{doc.filename}</p>
               <p className="text-sm text-muted-foreground mt-0.5">
                 {new Date(doc.uploadDate).toLocaleDateString("en-US", {
                   year: "numeric",

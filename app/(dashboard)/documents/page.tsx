@@ -3,7 +3,8 @@
 import { DocumentUpload } from "@/components/documents/document-upload"
 import { DocumentList } from "@/components/documents/document-list"
 import { PaymentModal } from "@/components/documents/payment-modal"
-import { Fab } from "@/components/ui/fab"
+import { PageHeader } from "@/components/ui/page-header"
+import { Button } from "@/components/ui/button"
 import type { Document } from "@/lib/db"
 import { Upload } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -95,19 +96,24 @@ export default function DocumentsPage() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Documents</h1>
-        <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
-          Upload and manage your documents for skill extraction (payment required per upload)
-        </p>
-      </div>
-
-      {!showUpload && (
-        <Fab onClick={handleUploadClick} aria-label="Upload document">
-          <Upload className="size-6" />
-        </Fab>
-      )}
+    <div className="space-y-10">
+      <PageHeader
+        eyebrow="04 — Library"
+        title={
+          <>
+            Your <span className="italic font-light text-primary">documents</span>.
+          </>
+        }
+        description="Upload coursework, assignments, projects, transcripts. KES 20 per upload — paid via M-PESA."
+        actions={
+          !showUpload && (
+            <Button onClick={handleUploadClick} className="gap-2">
+              <Upload className="size-4" />
+              New upload
+            </Button>
+          )
+        }
+      />
 
       <PaymentModal
         open={showPaymentModal}
@@ -130,10 +136,10 @@ export default function DocumentsPage() {
         />
       )}
 
-      <div>
-        <h2 className="mb-3 sm:mb-4 text-xl sm:text-2xl font-semibold">Your Documents</h2>
+      <section className="space-y-4">
+        <p className="editorial-eyebrow">Holdings · {documents.length}</p>
         {isLoading ? (
-          <p className="text-muted-foreground">Loading documents...</p>
+          <p className="text-sm text-muted-foreground">Loading documents…</p>
         ) : (
           <DocumentList
             documents={documents}
@@ -141,7 +147,7 @@ export default function DocumentsPage() {
             deletingId={deletingId}
           />
         )}
-      </div>
+      </section>
     </div>
   )
 }

@@ -1,16 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import {
-  Sparkles,
   Loader2,
-  TrendingUp,
   AlertCircle,
-  CheckCircle2,
   RefreshCw,
   ChevronDown,
   ChevronUp,
@@ -23,41 +19,59 @@ interface CareerGuidanceWidgetProps {
   careerGoal: string
 }
 
-const IMPORTANCE_CONFIG: Record<string, { label: string; className: string }> = {
-  high: { label: "High", className: "bg-destructive/10 text-destructive border-destructive/20" },
-  medium: { label: "Medium", className: "bg-warning/10 text-warning border-warning/20" },
-  low: { label: "Low", className: "bg-muted text-muted-foreground border-border" },
+const IMPORTANCE_TONE: Record<
+  string,
+  { label: string; cls: string }
+> = {
+  high: { label: "High", cls: "bg-destructive/10 text-destructive border-destructive/30" },
+  medium: { label: "Medium", cls: "bg-warning/10 text-warning border-warning/30" },
+  low: { label: "Low", cls: "bg-muted text-muted-foreground border-border" },
 }
 
 function ReadinessRing({ score }: { score: number }) {
-  const radius = 40
+  // Wider stroke, ink-on-paper feel
+  const radius = 46
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (score / 100) * circumference
-
-  const color =
-    score >= 75 ? "text-success" : score >= 50 ? "text-warning" : "text-destructive"
+  const verdict =
+    score >= 75 ? "Strong" : score >= 50 ? "Progressing" : "Early stage"
 
   return (
-    <div className="relative flex items-center justify-center w-28 h-28">
-      <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r={radius} fill="none" stroke="currentColor" strokeWidth="8" className="text-muted/30" />
+    <div className="relative flex flex-col items-center justify-center gap-1.5">
+      <svg className="w-32 h-32 -rotate-90" viewBox="0 0 120 120" aria-hidden>
         <circle
-          cx="50"
-          cy="50"
+          cx="60"
+          cy="60"
           r={radius}
           fill="none"
           stroke="currentColor"
-          strokeWidth="8"
+          strokeWidth="6"
+          className="text-border"
+        />
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="6"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          className={`${color} transition-all duration-700`}
+          className="text-primary transition-[stroke-dashoffset] duration-700 ease-out"
         />
       </svg>
-      <div className="absolute flex flex-col items-center">
-        <span className={`text-2xl font-bold ${color}`}>{score}</span>
-        <span className="text-[10px] text-muted-foreground font-medium">/ 100</span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        <span className="display-serif text-4xl font-medium leading-none tabular">
+          {score}
+        </span>
+        <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mt-1">
+          / 100
+        </span>
       </div>
+      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-foreground mt-2">
+        {verdict}
+      </span>
     </div>
   )
 }
@@ -72,7 +86,7 @@ export function CareerGuidanceWidget({
   const [error, setError] = useState<string | null>(null)
   const [showAllGaps, setShowAllGaps] = useState(false)
 
-  async function generateGuidance() {
+  async function generate() {
     setLoading(true)
     setError(null)
     try {
@@ -87,24 +101,20 @@ export function CareerGuidanceWidget({
     }
   }
 
+  // Empty states ────────────────────────────────────────────────────────
   if (!userHasSkills) {
     return (
-      <Card className="bento-card bento-card-primary">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-primary/10 p-2.5">
-              <Sparkles className="size-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-base sm:text-lg">Career Readiness</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">AI-powered career guidance</CardDescription>
-            </div>
-          </div>
+      <Card className="bento-card bento-card-primary p-0 gap-0">
+        <CardHeader className="pt-5">
+          <p className="editorial-eyebrow">Career readiness</p>
+          <CardTitle className="display-serif text-2xl sm:text-3xl font-normal tracking-tight">
+            Awaiting evidence
+          </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col items-center gap-3 py-4 text-center">
-          <AlertCircle className="size-10 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground max-w-xs">
-            Upload and analyze at least one document to unlock AI career guidance and your readiness score.
+        <CardContent className="flex flex-col items-start gap-3 pb-5">
+          <p className="text-sm text-muted-foreground max-w-md">
+            Upload and analyse a document to unlock readiness scoring against
+            the O*NET requirements for your target career.
           </p>
         </CardContent>
       </Card>
@@ -113,101 +123,81 @@ export function CareerGuidanceWidget({
 
   if (!guidance) {
     return (
-      <Card className="bento-card bento-card-primary">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-primary/10 p-2.5">
-              <Sparkles className="size-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-base sm:text-lg">Career Readiness</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Get personalized AI guidance for your goal
-              </CardDescription>
-            </div>
-          </div>
+      <Card className="bento-card bento-card-primary p-0 gap-0">
+        <CardHeader className="pt-5">
+          <p className="editorial-eyebrow">Career readiness</p>
+          <CardTitle className="display-serif text-2xl sm:text-3xl font-normal tracking-tight">
+            Run the benchmark
+          </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col items-center gap-4 py-4 text-center">
-          <div className="rounded-2xl bg-primary/5 p-4">
-            <Sparkles className="size-8 text-primary/60" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm font-medium">Ready to analyse your career readiness?</p>
-            <p className="text-xs text-muted-foreground max-w-xs">
-              AI will score your skills against <span className="font-semibold">{careerGoal}</span> and surface your
-              top gaps with tailored recommendations.
-            </p>
-          </div>
+        <CardContent className="space-y-4 pb-5">
+          <p className="text-sm text-muted-foreground">
+            Compare your extracted skills against O*NET&rsquo;s required profile for{" "}
+            <span className="text-foreground font-medium">{careerGoal || "your career"}</span>.
+            Deterministic gap analysis — no LLM hallucinations.
+          </p>
           {error && (
-            <p className="text-xs text-destructive flex items-center gap-1">
+            <p className="text-xs text-destructive flex items-center gap-1.5">
               <AlertCircle className="size-3" /> {error}
             </p>
           )}
-          <Button onClick={generateGuidance} disabled={loading} className="rounded-xl gap-2">
-            {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-            {loading ? "Analysing…" : "Generate Guidance"}
+          <Button onClick={generate} disabled={loading} size="sm">
+            {loading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Analysing…
+              </>
+            ) : (
+              "Generate guidance"
+            )}
           </Button>
         </CardContent>
       </Card>
     )
   }
 
+  // Result ──────────────────────────────────────────────────────────────
   const visibleGaps = showAllGaps ? guidance.gaps : guidance.gaps.slice(0, 3)
 
   return (
-    <Card className="bento-card bento-card-primary">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-primary/10 p-2.5">
-              <Sparkles className="size-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-base sm:text-lg">Career Readiness</CardTitle>
-              <CardDescription className="text-xs sm:text-sm truncate max-w-50 sm:max-w-none">
-                Goal: {guidance.careerGoal}
-              </CardDescription>
-            </div>
+    <Card className="bento-card bento-card-primary p-0 gap-0">
+      <CardHeader className="pt-5">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div className="space-y-1.5">
+            <p className="editorial-eyebrow">Career readiness</p>
+            <CardTitle className="display-serif text-2xl sm:text-3xl font-normal tracking-tight leading-tight">
+              {guidance.careerGoal}
+            </CardTitle>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={generateGuidance}
-            disabled={loading}
-            className="rounded-xl gap-1.5 text-xs h-8"
-          >
-            {loading ? <Loader2 className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
+          <Button variant="ghost" size="sm" onClick={generate} disabled={loading}>
+            {loading ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <RefreshCw className="size-3" />
+            )}
             Refresh
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-5">
-        {/* Score + Summary row */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 rounded-2xl bg-muted/40 p-4">
-          <ReadinessRing score={guidance.readinessScore} />
-          <div className="flex-1 space-y-2 text-center sm:text-left">
-            <p className="text-sm font-semibold">
-              {guidance.readinessScore >= 75
-                ? "Strong Match"
-                : guidance.readinessScore >= 50
-                ? "Good Progress"
-                : "Early Stage"}
-            </p>
-            <p className="text-xs text-muted-foreground leading-relaxed">{guidance.summary}</p>
+      <CardContent className="space-y-6 pb-6">
+        {/* Score + summary — asymmetric */}
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-start pt-2">
+          <div className="sm:col-span-4">
+            <ReadinessRing score={guidance.readinessScore} />
           </div>
+          <p className="sm:col-span-8 text-sm text-foreground/80 leading-relaxed">
+            {guidance.summary}
+          </p>
         </div>
 
         {/* Strengths */}
         {guidance.strengths.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-success" />
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Strengths</span>
-            </div>
+          <div className="space-y-2 pt-3 border-t border-border">
+            <p className="editorial-eyebrow">Strengths</p>
             <div className="flex flex-wrap gap-1.5">
               {guidance.strengths.map((s) => (
-                <Badge key={s} variant="outline" className="rounded-lg text-xs bg-success/5 text-success border-success/20">
+                <Badge key={s} variant="outline" className="font-normal normal-case tracking-normal text-xs py-0.5 bg-success/5 text-success border-success/30">
                   {s}
                 </Badge>
               ))}
@@ -217,33 +207,32 @@ export function CareerGuidanceWidget({
 
         {/* Gaps */}
         {guidance.gaps.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="size-4 text-warning" />
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Skill Gaps</span>
-            </div>
-            <div className="space-y-2">
+          <div className="space-y-2 pt-3 border-t border-border">
+            <p className="editorial-eyebrow">Skill gaps</p>
+            <ul className="divide-y divide-border">
               {visibleGaps.map((gap) => {
-                const cfg = IMPORTANCE_CONFIG[gap.importance?.toLowerCase()] ?? IMPORTANCE_CONFIG.low
+                const tone = IMPORTANCE_TONE[gap.importance?.toLowerCase()] ?? IMPORTANCE_TONE.low
                 return (
-                  <div key={gap.skill} className="flex items-start gap-3 rounded-xl bg-muted/30 p-3">
-                    <Badge variant="outline" className={`rounded-lg text-[10px] shrink-0 mt-0.5 ${cfg.className}`}>
-                      {cfg.label}
+                  <li key={gap.skill} className="py-3 flex items-start gap-3">
+                    <Badge variant="outline" className={`shrink-0 mt-0.5 ${tone.cls}`}>
+                      {tone.label}
                     </Badge>
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold truncate">{gap.skill}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{gap.suggestion}</p>
+                      <p className="text-sm font-medium leading-tight">{gap.skill}</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                        {gap.suggestion}
+                      </p>
                     </div>
-                  </div>
+                  </li>
                 )
               })}
-            </div>
+            </ul>
             {guidance.gaps.length > 3 && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="w-full rounded-xl text-xs h-7 gap-1"
                 onClick={() => setShowAllGaps((v) => !v)}
+                className="w-full"
               >
                 {showAllGaps ? (
                   <>
@@ -261,37 +250,23 @@ export function CareerGuidanceWidget({
 
         {/* Recommendations */}
         {guidance.recommendations.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Sparkles className="size-4 text-primary" />
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Recommendations
-              </span>
-            </div>
-            <ul className="space-y-1.5">
+          <div className="space-y-2 pt-3 border-t border-border">
+            <p className="editorial-eyebrow">Next moves</p>
+            <ol className="space-y-2 mt-1">
               {guidance.recommendations.map((r, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <span className="mt-0.5 size-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[9px] font-bold shrink-0">
-                    {i + 1}
+                <li key={i} className="flex items-start gap-3 text-sm text-foreground/80">
+                  <span className="font-mono text-[10px] tracking-widest text-primary mt-1 shrink-0 w-5">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  {r}
+                  <span className="leading-relaxed">{r}</span>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
         )}
 
-        {/* Progress bar */}
-        <div className="space-y-1">
-          <div className="flex justify-between text-[10px] text-muted-foreground">
-            <span>Overall readiness</span>
-            <span>{guidance.readinessScore}%</span>
-          </div>
-          <Progress value={guidance.readinessScore} className="h-1.5 rounded-full" />
-        </div>
-
         {error && (
-          <p className="text-xs text-destructive flex items-center gap-1">
+          <p className="text-xs text-destructive flex items-center gap-1.5">
             <AlertCircle className="size-3" /> {error}
           </p>
         )}

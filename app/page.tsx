@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Sparkles, TrendingUp, Lock } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { getCurrentUser } from "@/lib/supabase-auth"
@@ -16,134 +15,186 @@ export default async function HomePage() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
-      <header className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
-        <div className="container mx-auto flex h-14 items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="SkillSync Logo" width={160} height={160} className="rounded-md" />
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      {/* ── Masthead ───────────────────────────────────────────────────── */}
+      <header className="border-b border-border">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 h-14 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image src="/logo.png" alt="SkillSync" width={120} height={120} className="h-7 w-auto" />
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
-              <Link href="/auth/login">Sign In</Link>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/auth/login">Sign in</Link>
             </Button>
-            <Button size="sm" className="hidden sm:inline-flex" asChild>
-              <Link href="/auth/register">Get Started</Link>
-            </Button>
-            <Button size="sm" className="sm:hidden" asChild>
-              <Link href="/auth/register">Start</Link>
+            <Button size="sm" asChild>
+              <Link href="/auth/register" className="gap-1.5">
+                Get started
+                <ArrowUpRight className="size-3.5" />
+              </Link>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col pt-14">
-        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-          <div className="container mx-auto max-w-7xl">
-            {/* Hero Section - Compact */}
-            <div className="text-center mb-8 lg:mb-12">
-              <h1 className="mb-3 lg:mb-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                Transform Your Coursework Into
-                <span className="text-primary"> Valuable & Verifiable Skills</span>
+      {/* ── Hero ───────────────────────────────────────────────────────── */}
+      <main className="flex-1">
+        <section className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 pt-12 sm:pt-20 lg:pt-28 pb-16 sm:pb-24">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+            <div className="lg:col-span-8 space-y-7">
+              <p className="editorial-eyebrow">Issue 01 — A new contract for graduate skills</p>
+
+              <h1 className="display-serif text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[0.92] tracking-tight">
+                Turn coursework
+                <br />
+                into{" "}
+                <span className="italic font-light text-primary">verifiable</span>
+                <br className="hidden sm:block" />
+                career evidence.
               </h1>
-              <p className="mx-auto mb-4 lg:mb-6 max-w-2xl text-base lg:text-lg text-muted-foreground">
-                SkillSync uses AI to automatically extract and track skills from your coursework, projects, and
-                documents. Build your professional profile effortlessly.
+
+              <p className="text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed">
+                SkillSync reads the documents you already produce — notes, assignments,
+                projects — and benchmarks the skills inside them against the real-world
+                requirements of the career you&rsquo;re aiming for. Built at JKUAT, made for
+                the African graduate.
               </p>
-              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Button size="default" className="w-full sm:w-auto" asChild>
-                  <Link href="/auth/register">Get Started Free</Link>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <Button size="lg" asChild>
+                  <Link href="/auth/register" className="gap-2">
+                    Start free
+                    <ArrowUpRight className="size-4" />
+                  </Link>
                 </Button>
-                <Button
-                  size="default"
-                  variant="outline"
-                  className="w-full sm:w-auto bg-transparent hover:bg-primary hover:text-white hover:border-primary transition-all"
-                  asChild
-                >
-                  <Link href="/auth/login">Sign In</Link>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/auth/login">I have an account</Link>
                 </Button>
               </div>
             </div>
 
-            {/* Feature Cards - Updated mobile grid: 2 columns on mobile, 4 columns on desktop */}
-            <div className="grid gap-4 lg:gap-6 grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
-              <Card className="bento-card bento-card-primary hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-                <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-primary/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
-                    <Upload className="size-6 text-primary group-hover:text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-lg group-hover:text-primary-foreground">Upload Documents</CardTitle>
-                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
-                    Drop your coursework, projects, or any document
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="bento-card bento-card-accent hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-                <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-accent/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
-                    <Sparkles className="size-6 text-accent group-hover:text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-lg group-hover:text-primary-foreground">AI Analysis</CardTitle>
-                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
-                    Our AI extracts skills and competencies automatically
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="bento-card bento-card-success hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-                <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-success/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
-                    <TrendingUp className="size-6 text-success group-hover:text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-lg group-hover:text-primary-foreground">Track Progress</CardTitle>
-                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
-                    View your skills organized by category and confidence
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="bento-card bento-card-info hover:bg-primary hover:scale-[1.02] transition-all duration-300 cursor-pointer group">
-                <CardHeader className="p-4 lg:p-6">
-                  <div className="rounded-xl bg-info/10 group-hover:bg-primary-foreground/20 p-2 w-fit mb-3 transition-colors">
-                    <Lock className="size-6 text-info group-hover:text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-lg group-hover:text-primary-foreground">Secure & Private</CardTitle>
-                  <CardDescription className="text-sm group-hover:text-primary-foreground/80">
-                    Your data is encrypted and only accessible by you
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
+            {/* Asymmetric stat column — paper-block aside */}
+            <aside className="lg:col-span-4 lg:pl-8 lg:border-l lg:border-border space-y-8">
+              {[
+                { n: "1,500", label: "Students piloted at JKUAT", k: "01" },
+                { n: "8,400", label: "Documents analysed", k: "02" },
+                { n: "1,016", label: "Careers mapped via O*NET", k: "03" },
+              ].map((s) => (
+                <div key={s.k} className="space-y-1">
+                  <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
+                    {s.k}
+                  </p>
+                  <p
+                    className="display-serif text-5xl tabular-nums leading-none"
+                    style={{ fontVariationSettings: '"opsz" 144, "SOFT" 25' }}
+                  >
+                    {s.n}
+                  </p>
+                  <p className="text-xs text-muted-foreground pt-1">{s.label}</p>
+                </div>
+              ))}
+            </aside>
           </div>
-        </div>
+        </section>
 
-        <footer className="bg-background py-6 px-4 sm:px-6">
-          <div className="container mx-auto max-w-7xl">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-              {/* Left: Copyright with auto-updating year */}
-              <div className="order-2 sm:order-1">© {currentYear} SkillSync</div>
-
-              {/* Center: CodeWithEugene Creation */}
-              <div className="order-1 sm:order-2">
-                A{" "}
-                <a
-                  href="https://codewitheugene.top/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline font-medium transition-colors"
-                >
-                  CodeWithEugene
-                </a>{" "}
-                Creation
+        {/* ── How it works — three numbered editorial blocks ───────────── */}
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-16 sm:py-24">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 mb-12 sm:mb-16">
+              <div className="lg:col-span-4">
+                <p className="editorial-eyebrow mb-3">Method</p>
+                <h2 className="display-serif text-3xl sm:text-4xl leading-tight tracking-tight">
+                  Three steps,
+                  <br />
+                  no guesswork.
+                </h2>
               </div>
+              <p className="lg:col-span-7 lg:col-start-6 text-base text-muted-foreground leading-relaxed">
+                We don&rsquo;t score you against an AI&rsquo;s opinion of what your career
+                needs. Required skills come from the U.S. Department of Labor&rsquo;s O*NET
+                taxonomy — the same one universities and government agencies use.
+              </p>
+            </div>
 
-              {/* Right: Made for you */}
-              <div className="order-3">Made for you.</div>
+            <div className="grid sm:grid-cols-3 gap-px bg-border border border-border">
+              {[
+                {
+                  k: "01",
+                  title: "Upload.",
+                  body:
+                    "Drop your notes, assignments, projects, or a transcript. Plain text, .doc, or .docx — no PDF gymnastics.",
+                },
+                {
+                  k: "02",
+                  title: "Extract.",
+                  body:
+                    "We pull the skills, technologies, and competencies you&rsquo;ve already demonstrated, with evidence quoted from the source.",
+                },
+                {
+                  k: "03",
+                  title: "Benchmark.",
+                  body:
+                    "Pick your target career — Software Developer, Data Scientist, Civil Engineer — and see what you have, what you lack, what to learn next.",
+                },
+              ].map((s) => (
+                <div key={s.k} className="bg-background p-6 sm:p-8 space-y-3">
+                  <p className="font-mono text-xs tracking-widest text-primary">{s.k}</p>
+                  <h3 className="display-serif text-2xl sm:text-3xl leading-tight tracking-tight">
+                    {s.title}
+                  </h3>
+                  <p
+                    className="text-sm text-muted-foreground leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: s.body }}
+                  />
+                </div>
+              ))}
             </div>
           </div>
-        </footer>
+        </section>
+
+        {/* ── Closing call — wide editorial pull ───────────────────────── */}
+        <section className="border-t border-border bg-card">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-16 sm:py-20 grid lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-8 space-y-3">
+              <p className="editorial-eyebrow">For students • For institutions • SDG 4 / 8 / 9</p>
+              <p className="display-serif text-3xl sm:text-4xl lg:text-5xl leading-[1.05] tracking-tight">
+                Stop wondering if your degree is{" "}
+                <span className="italic font-light text-primary">working</span>.
+                Start measuring it.
+              </p>
+            </div>
+            <div className="lg:col-span-4 lg:flex lg:justify-end">
+              <Button size="lg" asChild>
+                <Link href="/auth/register" className="gap-2">
+                  Create your profile
+                  <ArrowUpRight className="size-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
       </main>
+
+      {/* ── Colophon ───────────────────────────────────────────────────── */}
+      <footer className="border-t border-border">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <p className="font-mono tracking-wider">
+            © {currentYear} SkillSync &nbsp;·&nbsp; JKUAT, Kenya
+          </p>
+          <p>
+            A{" "}
+            <a
+              href="https://codewitheugene.top/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline decoration-border hover:decoration-primary underline-offset-4"
+            >
+              CodeWithEugene
+            </a>{" "}
+            project.
+          </p>
+        </div>
+      </footer>
     </div>
   )
 }

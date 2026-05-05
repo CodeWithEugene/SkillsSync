@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Sparkles, Target, GraduationCap, BookOpen, TrendingUp, ListChecks } from "lucide-react"
-import { Progress } from "@/components/ui/progress"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { CareerPicker, type PickedCareer } from "@/components/career/career-picker"
 
 export default function OnboardingPage() {
@@ -42,40 +45,31 @@ export default function OnboardingPage() {
   }
 
   const totalSteps = 6
-  const progress = (step / totalSteps) * 100
 
   useEffect(() => {
     document.title = "Welcome | SkillSync"
   }, [])
 
   const handleNext = () => {
-    if (step < totalSteps) {
-      setStep(step + 1)
-    }
+    if (step < totalSteps) setStep(step + 1)
   }
-
   const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1)
-    }
+    if (step > 1) setStep(step - 1)
   }
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
     setError(null)
-
     try {
       const response = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       })
-
       if (!response.ok) {
         const data = await response.json()
         throw new Error(data.error || "Failed to save goals")
       }
-
       window.location.href = "/dashboard"
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -84,182 +78,143 @@ export default function OnboardingPage() {
     }
   }
 
+  const stepConfig = [
+    { eyebrow: "Step 01 — Career", title: "What career are you aiming for?", help: "We benchmark every analysis against this O*NET occupation." },
+    { eyebrow: "Step 02 — Education", title: "Where are you in your studies?", help: null },
+    { eyebrow: "Step 03 — Field", title: "What are you studying right now?", help: null },
+    { eyebrow: "Step 04 — Year", title: "How far along are you?", help: "This helps us judge your skill depth." },
+    { eyebrow: "Step 05 — Courses", title: "What courses are you taking?", help: "Comma-separated; helps us tailor recommendations." },
+    { eyebrow: "Step 06 — Priority", title: "What matters most right now?", help: null },
+  ]
+  const cur = stepConfig[step - 1]
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4 sm:p-6">
-      <Card className="w-full max-w-2xl shadow-2xl">
-        <CardHeader className="space-y-2 sm:space-y-3 text-center px-4 sm:px-6">
-          <div className="mx-auto flex size-12 sm:size-16 items-center justify-center rounded-full bg-primary/10">
-            <Sparkles className="size-6 sm:size-8 text-primary flex-shrink-0" />
-          </div>
-          <CardTitle className="text-2xl sm:text-3xl">Welcome to SkillSync!</CardTitle>
-          <CardDescription className="text-sm sm:text-base">
-            Let&apos;s personalize your learning journey in just a few steps
-          </CardDescription>
-          <Progress value={progress} className="mt-3 sm:mt-4" />
-          <p className="text-xs text-muted-foreground">
-            Step {step} of {totalSteps}
-          </p>
-        </CardHeader>
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-3xl px-5 sm:px-8 py-10 sm:py-16">
+        {/* Editorial progress dashes */}
+        <div className="flex items-center gap-2 mb-10">
+          {Array.from({ length: totalSteps }).map((_, i) => (
+            <span
+              key={i}
+              className={`h-0.5 flex-1 transition-colors ${
+                i < step ? "bg-primary" : "bg-border"
+              }`}
+            />
+          ))}
+        </div>
 
-        <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
-          {/* Step 1: Career Goal */}
+        <header className="space-y-2 mb-8">
+          <p className="editorial-eyebrow">{cur.eyebrow}</p>
+          <h1 className="display-serif text-4xl sm:text-5xl leading-[1.02] tracking-tight">
+            {cur.title}
+          </h1>
+          {cur.help && (
+            <p className="text-sm text-muted-foreground max-w-xl pt-2">{cur.help}</p>
+          )}
+          <div className="editorial-rule" />
+        </header>
+
+        <div className="space-y-6 min-h-[200px]">
           {step === 1 && (
-            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
-                <Target className="size-5 sm:size-6 text-primary flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Career Goal</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    Pick the career you&apos;re aiming for. Your gap analysis will be benchmarked against it.
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>What is your ultimate career goal?</Label>
-                <CareerPicker value={pickedCareer} onChange={handleCareerPick} autoFocus />
-                <p className="text-xs text-muted-foreground">
-                  Type a job title to search the O*NET occupation database (1,000+ careers).
-                </p>
-              </div>
+            <div className="space-y-3 animate-in fade-in-50 duration-500">
+              <Label className="text-xs">Target career</Label>
+              <CareerPicker value={pickedCareer} onChange={handleCareerPick} autoFocus />
+              <p className="text-xs text-muted-foreground">
+                Type to search the O*NET database — over 1,000 occupations.
+              </p>
             </div>
           )}
 
-          {/* Step 2: Education Level */}
           {step === 2 && (
-            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
-                <GraduationCap className="size-5 sm:size-6 text-primary flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Education Level</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Tell us about your current education</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="educationLevel">What is your current level of education?</Label>
-                <Select
-                  value={formData.educationLevel}
-                  onValueChange={(value) => setFormData({ ...formData, educationLevel: value })}
-                >
-                  <SelectTrigger id="educationLevel">
-                    <SelectValue placeholder="Select your education level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="high-school">High School</SelectItem>
-                    <SelectItem value="undergraduate">Undergraduate</SelectItem>
-                    <SelectItem value="graduate">Graduate</SelectItem>
-                    <SelectItem value="self-taught">Self-Taught</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-3 animate-in fade-in-50 duration-500 max-w-md">
+              <Label htmlFor="educationLevel" className="text-xs">Education level</Label>
+              <Select
+                value={formData.educationLevel}
+                onValueChange={(v) => setFormData({ ...formData, educationLevel: v })}
+              >
+                <SelectTrigger id="educationLevel">
+                  <SelectValue placeholder="Choose one" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="high-school">High school</SelectItem>
+                  <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                  <SelectItem value="graduate">Graduate</SelectItem>
+                  <SelectItem value="self-taught">Self-taught</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           )}
 
-          {/* Step 3: Current Study */}
           {step === 3 && (
-            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
-                <BookOpen className="size-5 sm:size-6 text-primary flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Current Studies</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">What are you currently studying?</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="currentStudy">What are you currently studying?</Label>
-                <Input
-                  id="currentStudy"
-                  placeholder="e.g., B.Sc. in Computer Science, Web Development Bootcamp..."
-                  value={formData.currentStudy}
-                  onChange={(e) => setFormData({ ...formData, currentStudy: e.target.value })}
-                />
-              </div>
+            <div className="space-y-3 animate-in fade-in-50 duration-500 max-w-md">
+              <Label htmlFor="currentStudy" className="text-xs">Current programme</Label>
+              <Input
+                id="currentStudy"
+                placeholder="B.Sc. Computer Science, web bootcamp…"
+                value={formData.currentStudy}
+                onChange={(e) => setFormData({ ...formData, currentStudy: e.target.value })}
+                autoFocus
+              />
             </div>
           )}
 
-          {/* Step 4: Study Year */}
           {step === 4 && (
-            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
-                <GraduationCap className="size-5 sm:size-6 text-primary flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Year of Study</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">This helps us understand your skill depth</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="studyYear">What year of study are you in?</Label>
-                <Input
-                  id="studyYear"
-                  placeholder="e.g., Year 2, Final Year, 6 months in..."
-                  value={formData.studyYear}
-                  onChange={(e) => setFormData({ ...formData, studyYear: e.target.value })}
-                />
-              </div>
+            <div className="space-y-3 animate-in fade-in-50 duration-500 max-w-md">
+              <Label htmlFor="studyYear" className="text-xs">Year of study</Label>
+              <Input
+                id="studyYear"
+                placeholder="Year 2, final year, six months in…"
+                value={formData.studyYear}
+                onChange={(e) => setFormData({ ...formData, studyYear: e.target.value })}
+                autoFocus
+              />
             </div>
           )}
 
-          {/* Step 5: Current Courses */}
           {step === 5 && (
-            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
-                <ListChecks className="size-5 sm:size-6 text-primary shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Current Courses</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    List the courses you&apos;re currently taking
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="courses">What courses are you currently enrolled in?</Label>
-                <textarea
-                  id="courses"
-                  className="flex min-h-[120px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="e.g., Introduction to Machine Learning, Data Structures, Web Development, Business Communication..."
-                  value={formData.courses}
-                  onChange={(e) => setFormData({ ...formData, courses: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Separate courses with commas or new lines. This helps us generate better career guidance.
-                </p>
-              </div>
+            <div className="space-y-3 animate-in fade-in-50 duration-500">
+              <Label htmlFor="courses" className="text-xs">Active courses</Label>
+              <textarea
+                id="courses"
+                rows={4}
+                className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 outline-none"
+                placeholder="Intro to Machine Learning, Data Structures, Web Development…"
+                value={formData.courses}
+                onChange={(e) => setFormData({ ...formData, courses: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground">Comma-separated or new lines.</p>
             </div>
           )}
 
-          {/* Step 6: Top Priority */}
           {step === 6 && (
-            <div className="space-y-4 sm:space-y-6 animate-in fade-in-50 duration-500">
-              <div className="flex items-center gap-2 sm:gap-3 rounded-xl bg-primary/5 p-3 sm:p-4">
-                <TrendingUp className="size-5 sm:size-6 text-primary shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Your Priority</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">What matters most to you right now?</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="topPriority">What is your top priority right now?</Label>
-                <Select
-                  value={formData.topPriority}
-                  onValueChange={(value) => setFormData({ ...formData, topPriority: value })}
-                >
-                  <SelectTrigger id="topPriority">
-                    <SelectValue placeholder="Select your priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="finding-internship">Finding an internship</SelectItem>
-                    <SelectItem value="degree-worth">Checking if my degree is worth it</SelectItem>
-                    <SelectItem value="skill-gaps">Identifying skill gaps</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-3 animate-in fade-in-50 duration-500 max-w-md">
+              <Label htmlFor="topPriority" className="text-xs">Top priority right now</Label>
+              <Select
+                value={formData.topPriority}
+                onValueChange={(v) => setFormData({ ...formData, topPriority: v })}
+              >
+                <SelectTrigger id="topPriority">
+                  <SelectValue placeholder="Choose one" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="finding-internship">Finding an internship</SelectItem>
+                  <SelectItem value="degree-worth">Checking if my degree is worth it</SelectItem>
+                  <SelectItem value="skill-gaps">Identifying skill gaps</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           )}
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && <p className="text-xs text-destructive">{error}</p>}
+        </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-10 pt-6 border-t border-border">
+          <span className="font-mono text-xs tabular text-muted-foreground">
+            {String(step).padStart(2, "0")} / {String(totalSteps).padStart(2, "0")}
+          </span>
+          <div className="flex gap-2 sm:justify-end">
             {step > 1 && (
-              <Button type="button" variant="outline" onClick={handleBack} className="w-full sm:flex-1 bg-transparent">
+              <Button type="button" variant="outline" onClick={handleBack}>
                 Back
               </Button>
             )}
@@ -268,18 +223,17 @@ export default function OnboardingPage() {
                 type="button"
                 onClick={handleNext}
                 disabled={step === 1 && !formData.socCode}
-                className="w-full sm:flex-1"
               >
-                Next
+                Continue
               </Button>
             ) : (
-              <Button type="button" onClick={handleSubmit} disabled={isSubmitting} className="w-full sm:flex-1">
-                {isSubmitting ? "Saving..." : "Complete Setup"}
+              <Button type="button" onClick={handleSubmit} disabled={isSubmitting}>
+                {isSubmitting ? "Saving…" : "Complete setup"}
               </Button>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

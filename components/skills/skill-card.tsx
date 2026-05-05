@@ -22,7 +22,7 @@ export function SkillCard({ skill }: SkillCardProps) {
     <Card className="transition-all hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 group">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
-          <CardTitle className="text-base font-semibold group-hover:text-primary transition-colors">
+          <CardTitle className="text-base font-semibold transition-colors">
             {skill.skillName}
           </CardTitle>
           {confidencePercentage && (

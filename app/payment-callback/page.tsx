@@ -43,18 +43,35 @@ export default function PaymentCallbackPage() {
   }, [])
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-5 p-6 bg-background text-foreground text-center">
       {status === "verifying" && (
         <>
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Verifying payment...</p>
+          <p className="editorial-eyebrow">Verifying</p>
+          <p className="display-serif text-3xl tracking-tight">One moment.</p>
         </>
       )}
       {status === "success" && (
-        <p className="text-sm text-green-600">Payment successful. You can close this window.</p>
+        <>
+          <p className="editorial-eyebrow text-success">Confirmed</p>
+          <h1 className="display-serif text-4xl sm:text-5xl tracking-tight leading-[1]">
+            Payment <span className="italic font-light text-primary">received</span>.
+          </h1>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            You can close this window.
+          </p>
+        </>
       )}
       {status === "failed" && (
-        <p className="text-sm text-destructive">Payment verification failed. Please try again from the Documents page.</p>
+        <>
+          <p className="editorial-eyebrow text-destructive">Failed</p>
+          <h1 className="display-serif text-4xl sm:text-5xl tracking-tight leading-[1]">
+            Could not verify.
+          </h1>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            Please try again from the Documents page.
+          </p>
+        </>
       )}
     </div>
   )
