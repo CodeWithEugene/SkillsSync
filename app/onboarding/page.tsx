@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { CareerPicker, type PickedCareer } from "@/components/career/career-picker"
+import { notify } from "@/lib/notify"
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -70,9 +71,12 @@ export default function OnboardingPage() {
         const data = await response.json()
         throw new Error(data.error || "Failed to save goals")
       }
+      notify.success("Profile set up", "Heading to your dashboard…")
       window.location.href = "/dashboard"
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      const msg = err instanceof Error ? err.message : "An error occurred"
+      setError(msg)
+      notify.error("Couldn't save profile", msg)
     } finally {
       setIsSubmitting(false)
     }

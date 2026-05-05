@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Fraunces, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 import { WagmiProviderWrapper } from "@/components/providers/wagmi-provider"
 import "./globals.css"
@@ -95,6 +96,25 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="skillsync-theme">
           <WagmiProviderWrapper>{children}</WagmiProviderWrapper>
         </ThemeProvider>
+        <Toaster
+          position="top-right"
+          theme="system"
+          closeButton
+          duration={5000}
+          toastOptions={{
+            classNames: {
+              toast:
+                "!rounded-md !border !border-border !bg-card !text-card-foreground !shadow-lg !font-sans",
+              title: "!font-medium !text-sm",
+              description: "!text-muted-foreground !text-xs",
+              success: "!border-success/40",
+              error: "!border-destructive/40",
+              actionButton: "!bg-primary !text-primary-foreground !rounded-sm !text-xs",
+              cancelButton: "!bg-muted !text-muted-foreground !rounded-sm !text-xs",
+              closeButton: "!bg-muted !text-muted-foreground !border-0",
+            },
+          }}
+        />
         <Analytics />
       </body>
     </html>

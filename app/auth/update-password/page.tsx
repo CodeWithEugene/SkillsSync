@@ -16,6 +16,7 @@ import {
   getPasswordRequirements,
   getPasswordStrengthColor,
 } from "@/lib/password-validation"
+import { notify } from "@/lib/notify"
 
 export default function UpdatePasswordPage() {
   const [password, setPassword] = useState("")
@@ -60,8 +61,11 @@ export default function UpdatePasswordPage() {
       const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
       setSuccess(true)
+      notify.success("Password updated", "Sign in with your new password.")
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      const msg = err instanceof Error ? err.message : "An error occurred"
+      setError(msg)
+      notify.error("Couldn't update password", msg)
     } finally {
       setIsLoading(false)
     }

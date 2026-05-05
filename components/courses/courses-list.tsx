@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import { notify } from "@/lib/notify"
 import type { Course } from "@/lib/db"
 import {
   Plus,
@@ -145,40 +146,68 @@ export default function CoursesList({ initialCourses }: { initialCourses: Course
       .map((t) => t.trim())
       .filter(Boolean)
 
-    const res = await fetch("/api/courses", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.name,
-        provider: form.provider || undefined,
-        url: form.url || undefined,
-        status: form.status,
-        skillTags,
-      }),
-    })
-
-    if (res.ok) {
+    try {
+      const res = await fetch("/api/courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          provider: form.provider || undefined,
+          url: form.url || undefined,
+          status: form.status,
+          skillTags,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "Couldn't add course")
+      }
       const { course } = await res.json()
       setCourses((prev) => [course, ...prev])
       setForm({ name: "", provider: "", url: "", status: "planned", skillTagsRaw: "" })
       setShowForm(false)
+      notify.success("Course added", course.name)
+    } catch (err) {
+      notify.error(
+        "Couldn't add course",
+        err instanceof Error ? err.message : "Try again.",
+      )
     }
   }
 
   async function handleStatusChange(id: string, status: Course["status"]) {
-    const res = await fetch(`/api/courses/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    })
-    if (res.ok) {
-      setCourses((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)))
+    const previous = courses.find((c) => c.id === id)?.status
+    setCourses((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)))
+    try {
+      const res = await fetch(`/api/courses/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      })
+      if (!res.ok) throw new Error("update failed")
+    } catch {
+      // Revert optimistic update
+      if (previous) {
+        setCourses((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, status: previous } : c)),
+        )
+      }
+      notify.error("Couldn't update course", "Status change wasn't saved.")
     }
   }
 
   async function handleDelete(id: string) {
-    await fetch(`/api/courses/${id}`, { method: "DELETE" })
+    const course = courses.find((c) => c.id === id)
     setCourses((prev) => prev.filter((c) => c.id !== id))
+    try {
+      const res = await fetch(`/api/courses/${id}`, { method: "DELETE" })
+      if (!res.ok) throw new Error("delete failed")
+      notify.success("Course removed", course?.name ?? undefined)
+    } catch {
+      // Revert
+      if (course) setCourses((prev) => [course, ...prev])
+      notify.error("Couldn't delete course", "Try again in a moment.")
+    }
   }
 
   const planned = courses.filter((c) => c.status === "planned")

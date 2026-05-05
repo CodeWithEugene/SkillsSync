@@ -1,11 +1,15 @@
 import { createClient } from "@/lib/supabase/server"
 import { updateDocumentStatus, createExtractedSkill, addSkillHistorySnapshot, getExtractedSkills } from "@/lib/db"
-import { generateText } from "@/lib/openai"
+import { generateText, generateTextFromMedia } from "@/lib/openai"
 import {
   SOFTWARE_ENGINEERING_FILENAME,
   SOFTWARE_ENGINEERING_INSIGHTS,
 } from "@/lib/software-engineering-insights"
 import { NextResponse } from "next/server"
+
+// Gemini inline-data limit is ~20 MB request size. Cap at 18 MB to leave headroom
+// for headers + the prompt text.
+const MAX_INLINE_BYTES = 18 * 1024 * 1024
 
 export async function POST(request: Request) {
   try {
@@ -34,14 +38,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Document has no filename", status: "FAILED" }, { status: 400 })
     }
 
-    // Check if file is PDF and reject it
-    if (filename.toLowerCase().endsWith(".pdf")) {
-      await updateDocumentStatus(documentId, "FAILED")
-      return NextResponse.json({
-        error: "PDF files are not supported. Please upload a text file.",
-        status: "FAILED",
-      })
-    }
+    const isPdf = filename.toLowerCase().endsWith(".pdf")
 
     // Option A: Predefined insights for software-engineering.docx
     const isSoftwareEngineering = filename.toLowerCase() === SOFTWARE_ENGINEERING_FILENAME.toLowerCase()
@@ -84,15 +81,14 @@ export async function POST(request: Request) {
       })
     }
 
-    // Standard AI extraction for other documents
-    const response = await fetch(document.file_url)
-    const fileContent = await response.text()
+    // ── Standard AI extraction (PDF + plain-text/doc/docx) ─────────────────
+    const fileResponse = await fetch(document.file_url)
+    if (!fileResponse.ok) {
+      await updateDocumentStatus(documentId, "FAILED")
+      return NextResponse.json({ error: "Failed to fetch document" }, { status: 500 })
+    }
 
-    // Limit content size to avoid token limits
-    const limitedContent = fileContent.substring(0, 15000)
-
-    // Call DeepSeek for skill extraction with technical/soft classification
-    const prompt = `Analyze the following coursework/document and extract skills, technologies, and competencies demonstrated. Return a JSON array with the following structure:
+    const baseInstructions = `Analyze the attached coursework/document and extract skills, technologies, and competencies demonstrated. Return a JSON array with the following structure:
 [
   {
     "skillName": "skill name",
@@ -108,15 +104,38 @@ Classification guide:
 - "soft": communication, teamwork, leadership, time management, emotional intelligence
 - "transferable": critical thinking, problem solving, research, project management, adaptability
 
-Document content:
-${limitedContent}
-
 Return only valid JSON array, no markdown formatting.`
 
-    const responseText = await generateText(
-      prompt,
+    const systemInstruction =
       "You are a skill extraction assistant. Extract and classify skills from academic documents and return them as JSON."
-    )
+
+    let responseText: string
+
+    if (isPdf) {
+      // Send the PDF directly to Gemini — it reads layout, tables, even handwriting.
+      const buffer = Buffer.from(await fileResponse.arrayBuffer())
+      if (buffer.byteLength > MAX_INLINE_BYTES) {
+        await updateDocumentStatus(documentId, "FAILED")
+        return NextResponse.json(
+          {
+            error: `PDF is too large (${(buffer.byteLength / 1024 / 1024).toFixed(1)} MB). Max 18 MB.`,
+            status: "FAILED",
+          },
+          { status: 400 },
+        )
+      }
+      responseText = await generateTextFromMedia(
+        baseInstructions,
+        { mimeType: "application/pdf", base64: buffer.toString("base64") },
+        systemInstruction,
+      )
+    } else {
+      // Plain text path — used for .txt, and (best-effort) .doc/.docx.
+      const fileContent = await fileResponse.text()
+      const limitedContent = fileContent.substring(0, 15000)
+      const prompt = `${baseInstructions}\n\nDocument content:\n${limitedContent}`
+      responseText = await generateText(prompt, systemInstruction)
+    }
 
     if (!responseText) {
       await updateDocumentStatus(documentId, "FAILED")

@@ -12,6 +12,7 @@ import {
   ChevronUp,
 } from "lucide-react"
 import type { CareerGuidance } from "@/lib/db"
+import { notify } from "@/lib/notify"
 
 interface CareerGuidanceWidgetProps {
   initialGuidance: CareerGuidance | null
@@ -94,8 +95,13 @@ export function CareerGuidanceWidget({
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to generate guidance")
       setGuidance(data)
+      notify.success(
+        "Guidance ready",
+        `Readiness: ${data.readinessScore}/100 toward ${data.careerGoal}.`,
+      )
     } catch (e: any) {
       setError(e.message)
+      notify.error("Couldn't generate guidance", e.message)
     } finally {
       setLoading(false)
     }

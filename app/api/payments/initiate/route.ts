@@ -3,10 +3,16 @@ import { createUploadPayment } from "@/lib/db"
 import {
   getPaystackAmount,
   getPaystackCurrency,
-  paystackInitializeTransaction,
+  paystackChargeMobileMoney,
 } from "@/lib/paystack"
 import { NextResponse } from "next/server"
 
+/**
+ * Direct M-PESA STK push — no Paystack hosted page.
+ * The user enters their phone in our modal once; Paystack sends the prompt
+ * to their phone immediately; they approve with their PIN.
+ * The frontend polls /api/payments/status/<reference> until it settles.
+ */
 export async function POST(request: Request) {
   try {
     const supabase = await createClient()
@@ -18,7 +24,14 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const phone = body?.phone as string | undefined
+    const phoneRaw = body?.phone
+    if (!phoneRaw || typeof phoneRaw !== "string" || phoneRaw.trim().length < 8) {
+      return NextResponse.json(
+        { error: "A valid M-PESA phone number is required." },
+        { status: 400 }
+      )
+    }
+
     const email = (user.email ?? "").trim()
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
@@ -31,51 +44,34 @@ export async function POST(request: Request) {
     const amount = getPaystackAmount()
     const currency = getPaystackCurrency()
 
-    await createUploadPayment(user.id, reference, amount) // amount stored for record; Paystack uses subunits
+    await createUploadPayment(user.id, reference, amount)
 
-    // CRITICAL: Use only a fixed production URL for callback. Never use x-forwarded-host on Vercel
-    // or Paystack will redirect to a deployment-specific URL that can 404 (DEPLOYMENT_NOT_FOUND).
-    const isProduction = process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production"
-    const baseUrl = isProduction
-      ? (process.env.PAYSTACK_CALLBACK_BASE_URL?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || "")
-      : (process.env.PAYSTACK_CALLBACK_BASE_URL?.trim() ||
-          process.env.NEXT_PUBLIC_APP_URL?.trim() ||
-          (request.headers.get("x-forwarded-proto") && request.headers.get("x-forwarded-host")
-            ? `${request.headers.get("x-forwarded-proto")}://${request.headers.get("x-forwarded-host")}`
-            : "http://localhost:3000"))
-    if (!baseUrl) {
-      console.error("[payments/initiate] Set PAYSTACK_CALLBACK_BASE_URL or NEXT_PUBLIC_APP_URL to your production URL (e.g. https://skillssync.xyz)")
-      return NextResponse.json(
-        { error: "Payment callback URL not configured. Please set PAYSTACK_CALLBACK_BASE_URL." },
-        { status: 500 }
-      )
-    }
-    const callbackUrl = `${baseUrl.replace(/\/$/, "")}/payment-callback`
-
-    const result = await paystackInitializeTransaction({
-      email,
-      amount,
-      currency,
-      reference,
-      callback_url: callbackUrl,
-      metadata: phone ? { phone: typeof phone === "string" ? phone : "" } : undefined,
-    })
-
-    // Append phone to checkout URL so Paystack can prefill the M-PESA number (254... format)
-    let authUrl = result.authorization_url
-    if (phone && typeof phone === "string") {
-      const normalized = phone.replace(/^\+/, "").trim()
-      if (normalized) {
-        const sep = authUrl.includes("?") ? "&" : "?"
-        authUrl = `${authUrl}${sep}mobile_number=${encodeURIComponent(normalized)}&phone=${encodeURIComponent(normalized)}`
-      }
+    let charge
+    try {
+      charge = await paystackChargeMobileMoney({
+        email,
+        amount,
+        currency,
+        reference,
+        phone: phoneRaw.trim(),
+        metadata: { user_id: user.id },
+      })
+    } catch (err) {
+      console.error("[payments/initiate] charge error:", err)
+      const message =
+        err instanceof Error ? err.message : "Couldn't reach Paystack"
+      return NextResponse.json({ error: message }, { status: 502 })
     }
 
+    // Charge.status is 'pay_offline' | 'send_pin' | 'pending' | 'success' | 'failed' …
+    // For M-PESA Kenya the typical first state is 'pay_offline' meaning the STK
+    // push went out and we wait for the user to confirm on their phone.
     return NextResponse.json({
-      reference: result.reference,
-      authorization_url: authUrl,
-      access_code: result.access_code,
-      message: "Complete payment in the popup.",
+      reference: charge.reference,
+      status: charge.status,
+      message:
+        charge.display_text ??
+        "Approve the M-PESA prompt on your phone to complete payment.",
     })
   } catch (err) {
     console.error("[payments/initiate]", err)

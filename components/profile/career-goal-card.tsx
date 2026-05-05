@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Target, Loader2, Edit2, Check, AlertCircle } from "lucide-react"
 import { CareerPicker, type PickedCareer } from "@/components/career/career-picker"
+import { notify } from "@/lib/notify"
 
 interface CareerGoalCardProps {
   initialSocCode: string | null
@@ -42,8 +43,13 @@ export function CareerGoalCard({
       setSocTitle(data.socTitle)
       setEditing(false)
       setPicked(null)
+      notify.success(
+        "Career updated",
+        `Now benchmarking against ${data.socTitle}.`,
+      )
     } catch (e: any) {
       setError(e.message)
+      notify.error("Couldn't save career", e.message)
     } finally {
       setSaving(false)
     }

@@ -10,6 +10,7 @@ import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Loader2, ArrowUpRight } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { notify } from "@/lib/notify"
 
 export default function LoginPage() {
   const [showOtp, setShowOtp] = useState(false)
@@ -43,8 +44,10 @@ export default function LoginPage() {
       const data = await res.json()
       if (!res.ok || !data.success) throw new Error(data.error || "Failed to send OTP")
       setOtpSent(true)
+      notify.success("OTP sent", `Check ${otpEmail} for the code.`)
     } catch (err: any) {
       setOtpError(err.message)
+      notify.error("Couldn't send OTP", err.message)
     } finally {
       setIsOtpSending(false)
     }
@@ -93,7 +96,9 @@ export default function LoginPage() {
         window.location.href = "/dashboard"
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      const msg = err instanceof Error ? err.message : "An error occurred"
+      setError(msg)
+      notify.error("Sign-in failed", msg)
     } finally {
       setIsLoading(false)
     }

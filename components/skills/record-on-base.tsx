@@ -11,6 +11,7 @@ import { SKILLS_REGISTRY_ABI, getBaseChainId } from "@/lib/base-contract"
 import type { ExtractedSkill } from "@/lib/db"
 import { ExternalLink, Loader2, Wallet, ShieldCheck, CheckCircle2 } from "lucide-react"
 import { getWalletLinkMessage } from "@/lib/wallet-nonce"
+import { notify } from "@/lib/notify"
 
 const REGISTRY_ADDRESS = process.env.NEXT_PUBLIC_SKILLS_REGISTRY_ADDRESS as `0x${string}` | undefined
 
@@ -117,8 +118,17 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
         throw new Error(err.error || "Failed to link wallet")
       }
       setLinkedAddress(address.toLowerCase())
+      notify.success(
+        "Wallet linked",
+        `${address.slice(0, 6)}…${address.slice(-4)} is now bound to your account.`,
+      )
     } catch (e) {
-      setLinkError(e instanceof Error ? e.message : "Failed to link wallet")
+      const message = e instanceof Error ? e.message : "Failed to link wallet"
+      setLinkError(message)
+      // Skip noisy toast for user-rejected signature ("User rejected the request")
+      if (!/reject/i.test(message)) {
+        notify.error("Couldn't link wallet", message)
+      }
     } finally {
       setLinkLoading(false)
     }
@@ -151,6 +161,10 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
         const baseUrl =
           chainId === 8453 ? "https://basescan.org" : "https://sepolia.basescan.org"
         setOnchainAttestation({ txUrl: `${baseUrl}/tx/${hash}`, txHash: hash })
+        notify.success(
+          "Recorded on Base",
+          `Tx ${hash.slice(0, 10)}…${hash.slice(-6)}. Verifying on-chain status…`,
+        )
         setTimeout(() => {
           fetch("/api/skills/onchain-status")
             .then((r) => r.ok && r.json())
@@ -159,7 +173,11 @@ export function RecordOnBase({ skills }: RecordOnBaseProps) {
         }, 4000)
       }
     } catch (e) {
+      const msg = e instanceof Error ? e.message : "Record failed"
       console.error("Record on Base failed:", e)
+      if (!/reject/i.test(msg)) {
+        notify.error("Couldn't record on Base", msg)
+      }
     }
   }
 

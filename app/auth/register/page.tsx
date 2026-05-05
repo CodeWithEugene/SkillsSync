@@ -15,6 +15,7 @@ import {
   getPasswordRequirements,
   getPasswordStrengthColor,
 } from "@/lib/password-validation"
+import { notify } from "@/lib/notify"
 
 export default function RegisterPage() {
   const [firstName, setFirstName] = useState("")
@@ -69,10 +70,13 @@ export default function RegisterPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ type: "signup" }),
         }).catch(() => {})
+        notify.success("Account created", "Let's set up your career goal next.")
         window.location.href = "/onboarding"
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      const msg = err instanceof Error ? err.message : "An error occurred"
+      setError(msg)
+      notify.error("Sign-up failed", msg)
       setIsLoading(false)
     }
   }

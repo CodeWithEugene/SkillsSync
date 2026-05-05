@@ -10,6 +10,7 @@ import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Loader2, CheckCircle2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { notify } from "@/lib/notify"
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("")
@@ -32,8 +33,11 @@ export default function ResetPasswordPage() {
       })
       if (error) throw error
       setEmailSent(true)
+      notify.success("Reset link sent", `Check ${email} — link expires in 60 minutes.`)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      const msg = err instanceof Error ? err.message : "An error occurred"
+      setError(msg)
+      notify.error("Couldn't send reset link", msg)
     } finally {
       setIsLoading(false)
     }

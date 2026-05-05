@@ -5,6 +5,7 @@ import { DocumentList } from "@/components/documents/document-list"
 import { PaymentModal } from "@/components/documents/payment-modal"
 import { PageHeader } from "@/components/ui/page-header"
 import { Button } from "@/components/ui/button"
+import { notify } from "@/lib/notify"
 import type { Document } from "@/lib/db"
 import { Upload } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -74,17 +75,32 @@ export default function DocumentsPage() {
     setDeletingId(doc.id)
     try {
       const res = await fetch(`/api/documents/${doc.id}`, { method: "DELETE" })
-      if (res.ok) {
-        await fetchDocuments()
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "Delete failed")
       }
+      await fetchDocuments()
+      notify.success("Document removed", `${doc.filename} has been deleted.`)
     } catch (err) {
       console.error("Failed to delete document:", err)
+      notify.error(
+        "Couldn't delete document",
+        err instanceof Error ? err.message : "Try again in a moment.",
+      )
     } finally {
       setDeletingId(null)
     }
   }
 
   const handleUploadClick = async () => {
+    // Block re-entry if an upload is already in flight
+    if (showUpload) {
+      notify.warn(
+        "One document at a time",
+        "Finish or close the current upload before starting another.",
+      )
+      return
+    }
     const res = await fetch("/api/payments/credits")
     const data = res.ok ? await res.json() : { hasCredit: false }
     setHasCredit(!!data.hasCredit)

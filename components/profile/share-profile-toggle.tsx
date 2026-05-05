@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Link2, Loader2, Check, Globe, Lock } from "lucide-react"
+import { notify } from "@/lib/notify"
 
 interface ShareProfileToggleProps {
   userId: string
@@ -22,16 +23,21 @@ export function ShareProfileToggle({ userId, initialIsPublic }: ShareProfileTogg
 
   async function togglePublic() {
     setLoading(true)
+    const next = !isPublic
     try {
       const res = await fetch("/api/profile/visibility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isPublic: !isPublic }),
+        body: JSON.stringify({ isPublic: next }),
       })
-      if (!res.ok) throw new Error()
-      setIsPublic((v) => !v)
+      if (!res.ok) throw new Error("visibility update failed")
+      setIsPublic(next)
+      notify.success(
+        next ? "Profile is now public" : "Profile set to private",
+        next ? "Anyone with the link can view your skills." : "Only you can see your profile.",
+      )
     } catch {
-      // silently fail — keep old state
+      notify.error("Couldn't update visibility", "Try again in a moment.")
     } finally {
       setLoading(false)
     }
@@ -42,9 +48,14 @@ export function ShareProfileToggle({ userId, initialIsPublic }: ShareProfileTogg
       typeof window !== "undefined"
         ? `${window.location.origin}/p/${userId}`
         : `/p/${userId}`
-    await navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+      notify.success("Link copied", "Paste it anywhere to share.")
+    } catch {
+      notify.error("Couldn't copy", "Your browser blocked clipboard access.")
+    }
   }
 
   return (

@@ -13,6 +13,7 @@ import {
   AlertCircle,
   RefreshCcw,
 } from "lucide-react"
+import { notify } from "@/lib/notify"
 
 type MatchResult = {
   matchScore: number
@@ -82,12 +83,16 @@ export default function CompareClient() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong.")
+        const msg = data.error ?? "Something went wrong."
+        setError(msg)
+        notify.error("Match analysis failed", msg)
         return
       }
       setResult(data)
+      notify.success("Match analysed", `${data.matchScore}/100 fit score.`)
     } catch {
       setError("Network error. Please try again.")
+      notify.error("Network error", "We couldn't reach the match service.")
     } finally {
       setLoading(false)
     }
