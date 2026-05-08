@@ -77,14 +77,14 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <aside className="lg:col-span-5 pt-6 lg:pt-0 border-t border-border lg:border-t-0">
+            <aside className="lg:col-span-5 pt-6 lg:pt-0 border-t border-border lg:border-t-0 lg:-mr-4 xl:-mr-8">
               <Image
                 src="/hero.svg"
                 alt="SkillSync hero illustration"
                 width={900}
                 height={900}
                 priority
-                className="w-full h-auto"
+                className="w-full h-auto lg:scale-110 origin-right"
               />
             </aside>
           </div>
