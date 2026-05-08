@@ -47,8 +47,8 @@ export default async function HomePage() {
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <main className="flex-1">
         <section className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-10 sm:pt-20 lg:pt-28 pb-12 sm:pb-24">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-end">
-            <div className="lg:col-span-8 space-y-6 sm:space-y-7 min-w-0">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            <div className="lg:col-span-7 space-y-6 sm:space-y-7 min-w-0">
               <p className="editorial-eyebrow">Issue 01 — A new contract for graduate skills</p>
 
               <h1 className="display-serif text-[2.4rem] sm:text-6xl lg:text-7xl xl:text-[5.5rem] leading-[0.95] sm:leading-[0.92] tracking-tight break-words">
@@ -77,26 +77,15 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Asymmetric stat column — paper-block aside */}
-            <aside className="lg:col-span-4 lg:pl-8 lg:border-l lg:border-border grid grid-cols-3 gap-4 sm:gap-6 lg:grid-cols-1 lg:gap-8 pt-6 lg:pt-0 border-t border-border lg:border-t-0">
-              {[
-                { n: "1,500", label: "Students piloted at JKUAT", k: "01" },
-                { n: "8,400", label: "Documents analysed", k: "02" },
-                { n: "1,016", label: "Careers via O*NET", k: "03" },
-              ].map((s) => (
-                <div key={s.k} className="space-y-1 min-w-0">
-                  <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-                    {s.k}
-                  </p>
-                  <p
-                    className="display-serif text-3xl sm:text-4xl lg:text-5xl tabular-nums leading-none"
-                    style={{ fontVariationSettings: '"opsz" 144, "SOFT" 25' }}
-                  >
-                    {s.n}
-                  </p>
-                  <p className="text-xs text-muted-foreground pt-1 leading-snug">{s.label}</p>
-                </div>
-              ))}
+            <aside className="lg:col-span-5 pt-6 lg:pt-0 border-t border-border lg:border-t-0">
+              <Image
+                src="/hero.svg"
+                alt="SkillSync hero illustration"
+                width={900}
+                height={900}
+                priority
+                className="w-full h-auto"
+              />
             </aside>
           </div>
         </section>
