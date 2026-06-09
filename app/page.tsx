@@ -9,6 +9,7 @@ import { Faq } from "@/components/landing/faq"
 import { ServicesGrid } from "@/components/landing/services-grid"
 import { FooterCta } from "@/components/landing/footer-cta"
 import { LandingFooter } from "@/components/landing/landing-footer"
+import { Reveal } from "@/components/landing/reveal"
 
 export default async function HomePage() {
   const user = await getCurrentUser()
@@ -22,15 +23,15 @@ export default async function HomePage() {
     <div className="font-jakarta min-h-screen flex flex-col bg-background text-foreground">
       <LandingNav />
       <main className="flex-1">
-        <Hero />
-        <ServicesIntro />
-        <CaseStudies />
-        <Testimonial />
-        <Faq />
-        <ServicesGrid />
-        <FooterCta />
+        <Reveal><Hero /></Reveal>
+        <Reveal><ServicesIntro /></Reveal>
+        <Reveal><CaseStudies /></Reveal>
+        <Reveal><Testimonial /></Reveal>
+        <Reveal><Faq /></Reveal>
+        <Reveal><ServicesGrid /></Reveal>
+        <Reveal><FooterCta /></Reveal>
       </main>
-      <LandingFooter year={currentYear} />
+      <Reveal><LandingFooter year={currentYear} /></Reveal>
     </div>
   )
 }
