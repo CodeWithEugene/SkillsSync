@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Fraunces, JetBrains_Mono } from "next/font/google"
+import { Geist, Fraunces, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -27,6 +27,14 @@ const fraunces = Fraunces({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  display: "swap",
+})
+
+// Marketing display — Plus Jakarta Sans, the typeface of the landing page design.
+// Scoped to the landing via the `font-jakarta` utility; the app proper keeps Geist.
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
   display: "swap",
 })
 
@@ -87,7 +95,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`dark ${geist.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${geist.variable} ${fraunces.variable} ${jetbrainsMono.variable} ${jakarta.variable}`}
     >
       <head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

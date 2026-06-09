@@ -34,6 +34,18 @@
   --accent: oklch(0.55 0.2 255);
   --accent-foreground: oklch(0.99 0.005 80);
 
+  /* Landing accent — SkillSync logo blue (matches --primary), replacing the
+   * marketing design's lime. White text reads on the cobalt fill. */
+  --lime: oklch(0.55 0.2 255);
+  --lime-foreground: oklch(0.99 0.005 80);
+  --ink: oklch(0.155 0.015 265);           /* ≈ #010205 dark panel */
+  --ink-foreground: oklch(0.985 0.005 80);
+  --ink-muted: oklch(0.66 0.01 265);       /* muted text on ink */
+  --landing-surface: oklch(0.965 0.003 80);   /* ≈ #f0f0f0 light card */
+  --landing-surface-foreground: oklch(0.16 0.02 280);
+  --landing-muted: oklch(0.46 0.012 265);     /* ≈ #5c5d5f body text */
+  --radius-card: 20px;
+
   /* Semantic — desaturated to harmonise with the ink-and-paper base */
   --success: oklch(0.5 0.12 145);
   --success-foreground: oklch(0.99 0.005 80);
@@ -95,6 +107,16 @@
   --accent: oklch(0.7 0.19 250);
   --accent-foreground: oklch(0.16 0.015 280);
 
+  /* Landing accent — lifted logo blue for dark mode (matches dark --primary). */
+  --lime: oklch(0.7 0.19 250);
+  --lime-foreground: oklch(0.16 0.015 280);
+  --ink: oklch(0.135 0.015 265);
+  --ink-foreground: oklch(0.985 0.005 80);
+  --ink-muted: oklch(0.66 0.01 265);
+  --landing-surface: oklch(0.225 0.015 280);
+  --landing-surface-foreground: oklch(0.93 0.01 80);
+  --landing-muted: oklch(0.66 0.02 80);
+
   --success: oklch(0.65 0.13 145);
   --success-foreground: oklch(0.16 0.015 280);
 
@@ -131,6 +153,7 @@
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display), ui-serif, Georgia, serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-jakarta: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -146,6 +169,14 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-lime: var(--lime);
+  --color-lime-foreground: var(--lime-foreground);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-ink-muted: var(--ink-muted);
+  --color-landing-surface: var(--landing-surface);
+  --color-landing-surface-foreground: var(--landing-surface-foreground);
+  --color-landing-muted: var(--landing-muted);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
@@ -181,6 +212,9 @@
     @apply border-border outline-ring/50;
   }
   html {
+    /* Clip horizontal overflow here (not on a sticky ancestor) so the
+       sticky navbar keeps anchoring to the viewport. */
+    overflow-x: hidden;
     /* Subtle paper grain; survives both themes */
     background-image:
       radial-gradient(oklch(0 0 0 / 0.012) 1px, transparent 1px),
@@ -301,6 +335,78 @@
     background: var(--muted);
     color: var(--muted-foreground);
     border-radius: calc(var(--radius) - 2px);
+  }
+
+  /* ── Landing (marketing) primitives ──────────────────────────────────── */
+  /* Pill button — fully-rounded, used across the landing CTAs */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    outline: none;
+  }
+  .pill:focus-visible {
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--lime);
+  }
+  .pill-ink {
+    background: #0190fe;
+    color: white;
+    padding: 1rem 1.5rem;
+  }
+  .pill-ink:hover { background: #017fe0; }
+  .pill-lime {
+    background: var(--lime);
+    color: var(--lime-foreground);
+    padding: 1rem 1.5rem;
+  }
+  .pill-lime:hover { filter: brightness(1.05); }
+  .pill-outline {
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+  }
+  .pill-outline:hover { background: #0190fe; color: white; border-color: #0190fe; }
+
+  /* Soft grain wash echoing the Figma "Background Noise" layer */
+  .landing-grain {
+    position: relative;
+  }
+  .landing-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(oklch(0 0 0 / 0.015) 1px, transparent 1px);
+    background-size: 4px 4px;
+    z-index: 0;
+  }
+  .dark .landing-grain::before {
+    background-image:
+      radial-gradient(oklch(1 0 0 / 0.02) 1px, transparent 1px);
+  }
+
+  /* Infinite logo marquee — track holds two identical copies; -50% loops seamlessly */
+  @keyframes marquee-x {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee-x 32s linear infinite;
+    will-change: transform;
+  }
+  .marquee-pause:hover .animate-marquee {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee { animation: none; }
   }
 
   /* Oversized metric block — big serif numeral with a small-caps label */
