@@ -64,21 +64,21 @@ export function LandingFooter({ year }: { year: number }) {
       <div className="relative z-10 mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-14 sm:py-20">
         <div className="grid gap-12 lg:gap-10 lg:grid-cols-12">
           {/* Brand + newsletter */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 space-y-6 text-center lg:text-left">
             <Image
               src="/logo.png"
               alt="SkillSync"
               width={595}
               height={118}
-              className="h-8 w-auto max-w-[180px] object-contain object-left brightness-0 invert"
+              className="h-8 w-auto max-w-[180px] object-contain object-center lg:object-left mx-auto lg:mx-0 brightness-0 invert"
             />
-            <p className="text-sm text-white/60 max-w-xs leading-relaxed">
+            <p className="text-sm text-white/60 max-w-xs mx-auto lg:mx-0 leading-relaxed">
               Turn coursework into verifiable career evidence. Built at JKUAT,
               made for the African graduate.
             </p>
 
             {/* Newsletter */}
-            <div className="max-w-sm">
+            <div className="max-w-sm mx-auto lg:mx-0">
               <h3 className="text-sm font-jakarta font-bold mb-2.5">
                 Stay In The Loop
               </h3>
@@ -104,7 +104,7 @@ export function LandingFooter({ year }: { year: number }) {
           </div>
 
           {/* Link columns */}
-          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-6">
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-6 text-center sm:text-left">
             {COLUMNS.map((col) => (
               <div key={col.title}>
                 <h3 className="text-sm font-jakarta font-bold mb-4">{col.title}</h3>

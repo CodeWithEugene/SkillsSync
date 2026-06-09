@@ -8,7 +8,7 @@ export function Hero() {
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 lg:px-12">
         <div className="w-full grid lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
           {/* ── Copy ─────────────────────────────────────────────── */}
-          <div className="lg:col-span-6 xl:col-span-7 space-y-7 min-w-0">
+          <div className="lg:col-span-6 xl:col-span-7 space-y-7 min-w-0 text-center lg:text-left">
             <h1 className="font-jakarta font-bold tracking-[-0.03em] leading-[1.02] text-[2.6rem] sm:text-6xl xl:text-[4.5rem]">
               Turn Your Coursework Into{" "}
               <span className="relative whitespace-nowrap text-lime">
@@ -17,14 +17,14 @@ export function Hero() {
               Proof.
             </h1>
 
-            <p className="text-base sm:text-lg text-landing-muted max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg text-landing-muted max-w-xl mx-auto lg:mx-0 leading-relaxed">
               SkillSync reads the notes, assignments and projects you already
               produce — then benchmarks the skills inside them against the
               real-world requirements of the career you&rsquo;re aiming for.
               Built at JKUAT, made for the African graduate.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 sm:gap-5 pt-1">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-5 pt-1">
               <Link href="/auth/register" className="pill pill-ink">
                 Start Free
                 <span className="inline-flex items-center justify-center size-6 rounded-full bg-white/20 text-white">

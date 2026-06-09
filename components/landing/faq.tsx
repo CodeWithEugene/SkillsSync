@@ -51,7 +51,7 @@ export function Faq() {
         <div className="rounded-[24px] sm:rounded-[32px] bg-card border border-border/60 px-5 sm:px-10 lg:px-14 py-12 sm:py-16">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
             {/* Left */}
-            <div className="lg:max-w-sm">
+            <div className="lg:max-w-sm text-center lg:text-left">
               <h2 className="font-jakarta font-bold tracking-[-0.03em] leading-[1.05] text-3xl sm:text-4xl xl:text-5xl">
                 SkillSync <span className="text-[#0190fe]">FAQs</span>
               </h2>
@@ -60,7 +60,7 @@ export function Faq() {
                 verifiable, career-ready evidence. Still curious? We&rsquo;re happy
                 to help.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-5">
+              <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-5">
                 <Link href="/auth/register" className="pill pill-outline !py-3 !px-6 text-sm">
                   More Questions
                 </Link>

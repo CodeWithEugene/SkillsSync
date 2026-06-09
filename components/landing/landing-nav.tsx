@@ -172,14 +172,45 @@ export function LandingNav() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — slides in from the left */}
+      {/* Backdrop */}
+      <div
+        onClick={() => setOpen(false)}
+        aria-hidden
+        className={cn(
+          "lg:hidden fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300",
+          open ? "opacity-100" : "opacity-0 pointer-events-none",
+        )}
+      />
+
+      {/* Drawer */}
       <div
         className={cn(
-          "lg:hidden overflow-hidden border-t border-border/60 transition-[max-height] duration-300",
-          open ? "max-h-[32rem]" : "max-h-0 border-t-0",
+          "lg:hidden fixed inset-y-0 left-0 z-[70] w-[82%] max-w-xs bg-background shadow-2xl flex flex-col transition-transform duration-300 ease-out",
+          open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <ul className="px-4 sm:px-8 py-4 flex flex-col gap-1">
+        <div className="flex items-center justify-between px-4 h-16 border-b border-border/60">
+          <Link href="/" onClick={() => setOpen(false)} className="flex items-center shrink-0">
+            <Image
+              src="/logo.png"
+              alt="SkillSync"
+              width={595}
+              height={118}
+              className="h-7 w-auto max-w-[150px] object-contain object-left"
+            />
+          </Link>
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setOpen(false)}
+            className="inline-flex items-center justify-center size-10 rounded-full border border-border text-foreground"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
+
+        <ul className="px-4 py-4 flex flex-col gap-1 overflow-y-auto">
           {NAV.flatMap((item) =>
             item.children
               ? item.children.map((c) => ({ label: c.label, href: c.href }))
@@ -195,18 +226,18 @@ export function LandingNav() {
               </Link>
             </li>
           ))}
-          <li className="pt-2 flex gap-3">
+          <li className="pt-2 flex flex-col gap-3">
             <Link
               href="/auth/register"
               onClick={() => setOpen(false)}
-              className="flex-1 text-center rounded-full border border-foreground/90 px-5 py-3 text-sm font-bold"
+              className="text-center rounded-full border border-foreground/90 px-5 py-3 text-sm font-bold"
             >
               Get Started
             </Link>
             <Link
               href="/auth/login"
               onClick={() => setOpen(false)}
-              className="flex-1 text-center rounded-full bg-ink text-ink-foreground px-5 py-3 text-sm font-bold"
+              className="text-center rounded-full bg-ink text-ink-foreground px-5 py-3 text-sm font-bold"
             >
               Sign In
             </Link>

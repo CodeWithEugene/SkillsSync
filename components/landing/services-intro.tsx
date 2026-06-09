@@ -23,7 +23,7 @@ export function ServicesIntro() {
       <section id="how-it-works" className="border-b border-border/60">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-14 sm:py-20">
           {/* ── Header ─────────────────────────────────── */}
-          <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 mb-10 sm:mb-14">
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 mb-10 sm:mb-14 text-center lg:text-left">
             <h2 className="lg:col-span-7 font-jakarta font-bold tracking-[-0.03em] leading-[1.05] text-3xl sm:text-5xl xl:text-[3.5rem]">
               Built On <span className="text-[#0190fe]">Real Labor-Market Data</span>, Not An <span className="text-[#0190fe]">AI&rsquo;s Opinion</span>.
             </h2>

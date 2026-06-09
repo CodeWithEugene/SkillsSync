@@ -29,7 +29,7 @@ export function ServicesGrid() {
   return (
     <section id="services" className="border-t border-border/60">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-16 sm:py-24">
-        <div className="flex flex-col lg:flex-row lg:items-end gap-6 sm:gap-10 mb-10 sm:mb-14">
+        <div className="flex flex-col lg:flex-row lg:items-end gap-6 sm:gap-10 mb-10 sm:mb-14 text-center lg:text-left">
           <h2 className="flex-1 font-jakarta font-bold tracking-[-0.03em] leading-[1.06] text-3xl sm:text-4xl xl:text-5xl">
             The <span className="text-[#0190fe]">Skill Map</span> That Turns Your Degree Into <span className="text-[#0190fe]">Interviews</span> &amp; <span className="text-[#0190fe]">Offers</span>.
           </h2>
